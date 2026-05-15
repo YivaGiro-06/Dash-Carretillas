@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Check List & Novedades de Carretillas · CD Itagüí · Dashboard de Auditoría</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#f5f5f4;--panel:#fff;--ink:#0a0a0a;--ink-2:#171717;--ink-3:#262626;
+  --muted:#737373;--muted-2:#a3a3a3;--line:#e7e5e4;--line-2:#d6d3d1;
+  --dark-900:#0a0a0a;--dark-800:#171717;--dark-700:#262626;--dark-600:#404040;
+  --orange:#f97316;--orange-dk:#ea580c;--orange-lt:#fed7aa;
+  --amber:#fbbf24;--amber-dk:#d97706;--yellow:#facc15;
+  --green:#16a34a;--green-dk:#15803d;
+  --red:#dc2626;--red-dk:#991b1b;--red-lt:#fecaca;
+  --slate:#64748b;
+  --radius:12px;
+  --shadow:0 1px 2px rgba(0,0,0,.04),0 4px 14px rgba(0,0,0,.06);
+  --shadow-lg:0 10px 30px rgba(0,0,0,.10);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.tabular{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+.mono{font-family:'JetBrains Mono',ui-monospace,monospace}
+
+.header{background:#0a0a0a;color:#fff;padding:18px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;position:relative;border-bottom:3px solid var(--orange)}
+.header-left{display:flex;align-items:center;gap:14px;min-width:0}
+.header-icon{width:46px;height:46px;border-radius:9px;background:linear-gradient(135deg,var(--amber),var(--orange));display:grid;place-items:center;flex-shrink:0;font-weight:800;font-size:22px;color:#171717;box-shadow:0 4px 14px rgba(249,115,22,.35)}
+.header-icon svg{width:24px;height:24px;color:#171717}
+.header h1{font-size:20px;font-weight:800;letter-spacing:-.3px;line-height:1.2;color:#fff}
+.header .sub{font-size:12.5px;color:#a3a3a3;font-weight:500;margin-top:3px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.header .sub b{color:#fff;font-weight:600;background:rgba(255,255,255,.08);padding:1px 8px;border-radius:5px;font-size:11px}
+.header-right{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.filter{display:flex;align-items:center;gap:8px;color:#a3a3a3;font-size:11.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase}
+.filter svg{width:14px;height:14px;color:var(--orange)}
+.filter select{background:#fff;border:none;border-radius:7px;padding:8px 28px 8px 12px;font-family:inherit;font-weight:600;font-size:13px;color:var(--ink);cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23404040' stroke-width='2.5' stroke-linecap='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;background-size:13px;min-width:140px;text-transform:none;letter-spacing:0}
+.badge-pill{background:var(--orange);color:#fff;font-weight:700;font-size:13.5px;padding:8px 16px;border-radius:999px;box-shadow:0 0 0 3px rgba(249,115,22,.22)}
+.badge-pill.good{background:var(--green);box-shadow:0 0 0 3px rgba(22,163,74,.22)}
+.badge-pill.bad{background:var(--red);box-shadow:0 0 0 3px rgba(220,38,38,.22)}
+.badge-corner{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:#fff;padding:8px 14px;border-radius:7px;font-weight:600;font-size:13px}
+
+.tabs{background:#0a0a0a;padding:0 32px;display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid #1f1f1f}
+.tab{color:#a3a3a3;background:none;border:none;cursor:pointer;padding:13px 18px;font-family:inherit;font-size:13px;font-weight:600;position:relative;white-space:nowrap;display:flex;align-items:center;gap:8px;transition:color .15s}
+.tab svg{width:15px;height:15px;opacity:.7}
+.tab:hover{color:#fff}.tab:hover svg{opacity:1}
+.tab.active{color:#fff}.tab.active svg{color:var(--orange);opacity:1}
+.tab.active::after{content:"";position:absolute;left:14px;right:14px;bottom:0;height:3px;background:var(--amber);border-radius:3px 3px 0 0}
+
+.main{padding:24px 32px;max-width:1700px;margin:0 auto}
+
+.alert{background:linear-gradient(95deg,#fef2f2,#fff7ed);border-left:5px solid var(--orange);border-radius:var(--radius);padding:16px 22px;margin-bottom:22px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow)}
+.alert .icon{width:42px;height:42px;border-radius:50%;background:#ffedd5;color:var(--orange-dk);display:grid;place-items:center;flex-shrink:0}
+.alert .icon svg{width:22px;height:22px}
+.alert h3{font-size:14px;font-weight:800;color:#7c2d12;letter-spacing:-.2px}
+.alert p{font-size:12.5px;color:var(--ink-2);margin-top:2px;font-weight:500}
+.alert p b{color:var(--red-dk)}
+
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:22px}
+.kpi{background:var(--panel);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);position:relative;overflow:hidden;border-left:4px solid var(--orange);transition:transform .2s,box-shadow .2s;cursor:pointer}
+.kpi:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.kpi.amber{border-left-color:var(--amber)}.kpi.red{border-left-color:var(--red)}
+.kpi.dark{border-left-color:var(--dark-800)}.kpi.green{border-left-color:var(--green)}
+.kpi-val{font-size:34px;font-weight:800;letter-spacing:-1.5px;line-height:1;color:var(--ink)}
+.kpi.red .kpi-val{color:var(--red)}.kpi.amber .kpi-val{color:var(--amber-dk)}
+.kpi.dark .kpi-val{color:var(--dark-800)}.kpi.green .kpi-val{color:var(--green-dk)}
+.kpi-label{font-size:12.5px;font-weight:700;color:var(--ink-2);margin-top:9px}
+.kpi-sub{font-size:11px;color:var(--muted);margin-top:3px;font-weight:500}
+.kpi::after{content:"→";position:absolute;top:12px;right:16px;font-size:16px;font-weight:700;color:var(--muted-2);opacity:0;transition:opacity .2s,transform .2s,color .2s}
+.kpi:hover::after{opacity:1;transform:translateX(2px);color:var(--orange)}
+.kpi:focus{outline:none}
+.kpi:focus-visible{box-shadow:0 0 0 3px rgba(249,115,22,.35),var(--shadow-lg);outline:none}
+button.kpi{text-align:left;font:inherit;color:inherit;width:100%;background:var(--panel);border:none;border-left:4px solid var(--orange)}
+
+.panel{background:var(--panel);border-radius:var(--radius);padding:22px 24px;box-shadow:var(--shadow)}
+.panel + .panel{margin-top:18px}
+.panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.panel-title{font-size:11.5px;font-weight:700;letter-spacing:.8px;color:var(--ink-2);text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.panel-title::before{content:"";width:3px;height:14px;background:var(--orange);border-radius:2px}
+.panel-desc{font-size:12px;color:var(--muted);margin-top:3px;font-weight:500;text-transform:none;letter-spacing:0;padding-left:11px}
+
+.grid-2{display:grid;grid-template-columns:1.6fr 1fr;gap:18px}
+.grid-2-equal{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+@media (max-width:1100px){.grid-2,.grid-2-equal,.grid-3{grid-template-columns:1fr}}
+
+.chart-wrap{position:relative;height:340px}
+.chart-wrap.tall{height:420px}
+.chart-wrap.short{height:240px}
+.chart-wrap.xtall{height:520px}
+
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{background:#171717;text-align:left;padding:11px 14px;font-weight:700;font-size:11px;letter-spacing:.6px;color:#e5e5e5;text-transform:uppercase;border-bottom:1px solid #262626;position:sticky;top:0;z-index:1}
+.tbl th.num{text-align:right}
+.tbl td{padding:11px 14px;border-bottom:1px solid var(--line);color:var(--ink-2);vertical-align:top}
+.tbl tr:hover td{background:#fafaf9}
+.tbl tr:last-child td{border-bottom:none}
+.tbl .num{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+.scroll-area{max-height:600px;overflow:auto;border:1px solid var(--line);border-radius:10px}
+
+.tag{display:inline-block;padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;font-variant-numeric:tabular-nums}
+.tag.tag-green{background:#dcfce7;color:#14532d}
+.tag.tag-red{background:#fee2e2;color:#7f1d1d}
+.tag.tag-amber{background:#fef3c7;color:#78350f}
+.tag.tag-orange{background:#ffedd5;color:#7c2d12}
+.tag.tag-dark{background:#171717;color:#fff}
+.tag.tag-slate{background:#e5e5e5;color:#262626}
+.tag.tag-blue{background:#dbeafe;color:#1e40af}
+
+.bar-cell{display:flex;align-items:center;gap:10px}
+.bar-cell .barbg{flex:1;height:6px;background:#e7e5e4;border-radius:3px;overflow:hidden;min-width:60px}
+.bar-cell .barfill{height:100%;background:linear-gradient(90deg,var(--orange),var(--amber))}
+.bar-cell .barfill.good{background:linear-gradient(90deg,var(--green),#22c55e)}
+.bar-cell .barfill.bad{background:linear-gradient(90deg,var(--red),#f87171)}
+.bar-cell .pcttxt{min-width:42px;text-align:right;font-weight:700;font-size:12.5px;font-variant-numeric:tabular-nums}
+
+.search-bar{display:flex;gap:10px;margin-bottom:14px;align-items:center;flex-wrap:wrap}
+.search-bar input,.search-bar select{padding:9px 12px;border:1px solid var(--line-2);border-radius:8px;font-family:inherit;font-size:13px;background:#fff;color:var(--ink);min-width:160px}
+.search-bar input{flex:1;min-width:220px}
+.search-bar input:focus,.search-bar select:focus{outline:none;border-color:var(--orange);box-shadow:0 0 0 3px rgba(249,115,22,.18)}
+.search-bar .count{font-size:12px;color:var(--muted);font-weight:600}
+
+.tab-content{display:none;animation:fadeIn .25s ease}
+.tab-content.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+#hallazgos-summary .kpi::after,#novedades-summary .kpi::after{display:none}
+#hallazgos-summary .kpi:hover,#novedades-summary .kpi:hover{transform:none}
+
+.footer{padding:24px 32px;text-align:center;color:var(--muted);font-size:11.5px;font-weight:500;border-top:1px solid var(--line)}
+
+.stat-mini{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:10px;background:#fafaf9;border:1px solid var(--line)}
+.stat-mini .num{font-size:26px;font-weight:800;color:var(--ink);letter-spacing:-1px;font-variant-numeric:tabular-nums;line-height:1}
+.stat-mini .num.red{color:var(--red)}.stat-mini .num.green{color:var(--green-dk)}.stat-mini .num.amber{color:var(--amber-dk)}
+.stat-mini .lbl{font-size:12px;font-weight:600;color:var(--ink-2);line-height:1.3}
+
+@media print{body{background:#fff}.tabs{display:none}.tab-content{display:block !important;page-break-after:always}.header,.tabs{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+#novedades-summary .kpi::after{display:none}
+#novedades-summary .kpi:hover{transform:none}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-left">
+    <div class="header-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/><path d="M2 5h4l3 12h11"/><path d="M9 17V5h11l-2 8"/></svg>
+    </div>
+    <div>
+      <h1>Check List & Novedades de Carretillas · Dashboard de Auditoría</h1>
+      <div class="sub">
+        <span>Pilar SST · Enero – Mayo 2026</span>
+        <span>·</span>
+        <b id="meta-plan">3,267 planeaciones</b>
+        <span>·</span>
+        <b id="meta-placas">90 placas</b>
+        <span>·</span>
+        <b id="meta-resp">102 responsables</b>
+      </div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="filter">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      <span>CD:</span><select disabled><option>CD Itagüí</option></select>
+    </div>
+    <div class="filter">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span>Mes:</span><select id="filter-mes"><option value="">Todos</option></select>
+    </div>
+    <div class="badge-pill good" id="badge-adh">88.2% Adherencia</div>
+    <div class="badge-corner">GIR · Itagüí 2026</div>
+  </div>
+</header>
+
+<nav class="tabs" id="tabs">
+  <button class="tab active" data-tab="general"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Vista General</button>
+  <button class="tab" data-tab="adherencia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Adherencia y Aptitud</button>
+  <button class="tab" data-tab="inspecciones"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Inspecciones</button>
+  <button class="tab" data-tab="hallazgos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Hallazgos</button>
+  <button class="tab" data-tab="placas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="12" y1="10" x2="12" y2="14"/><line x1="16" y1="10" x2="16" y2="14"/></svg>Por Placa</button>
+  <button class="tab" data-tab="responsables"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Por Responsable</button>
+    <button class="tab" data-tab="novedades"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Novedades</button>
+</nav>
+
+<main class="main">
+
+  <section class="alert">
+    <div class="icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    </div>
+    <div style="flex:1">
+      <h3>Resumen ejecutivo</h3>
+      <p>De <b>3,267 planeaciones</b> en 5 meses: <b>88.2% adherencia</b> (387 sin evaluar) · <b>560 carretillas no aptas (17.1%)</b> · <b>263 hallazgos en ítems</b> · <b>173 novedades de mantenimiento</b> con <b>98.3% cierre</b> en <b>2.2 días promedio</b>. Ítem más afectado: <b>ruedas y condiciones de carretilla 1</b></p>
+    </div>
+  </section>
+
+  <section class="kpi-row" id="kpi-row"></section>
+
+  <!-- ============ VISTA GENERAL ============ -->
+  <section class="tab-content active" data-tab="general">
+    <div class="grid-2">
+      <div class="panel">
+        <div class="panel-head"><div>
+          <div class="panel-title">Evolución mensual · Adherencia, cumplimiento y aptitud</div>
+          <div class="panel-desc">Tendencia de las 3 métricas operativas clave</div>
+        </div></div>
+        <div class="chart-wrap"><canvas id="chartTrend"></canvas></div>
+      </div>
+      <div>
+        <div class="panel">
+          <div class="panel-head"><div><div class="panel-title">Aptitud de carretillas</div><div class="panel-desc">Apta para operación</div></div></div>
+          <div class="chart-wrap short"><canvas id="chartAptitud"></canvas></div>
+        </div>
+        <div class="panel" style="margin-top:18px">
+          <div class="panel-head"><div><div class="panel-title">Adherencia</div><div class="panel-desc">Evaluadas vs sin evaluar</div></div></div>
+          <div class="chart-wrap short"><canvas id="chartAdhDonut"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2-equal" style="margin-top:18px">
+      <div class="panel">
+        <div class="panel-head"><div>
+          <div class="panel-title">Hallazgos por ítem inspeccionado · Carretilla 1 vs Carretilla 2</div>
+          <div class="panel-desc">Cantidad de "NO" detectados sobre 2,880 inspecciones</div>
+        </div></div>
+        <div class="chart-wrap"><canvas id="chartItemsCompar"></canvas></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><div>
+          <div class="panel-title">Top 10 placas con más hallazgos</div>
+          <div class="panel-desc">Acción correctiva prioritaria</div>
+        </div></div>
+        <div class="chart-wrap"><canvas id="chartTopPlacas"></canvas></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ADHERENCIA ============ -->
+  <section class="tab-content" data-tab="adherencia">
+    <div class="panel">
+      <div class="panel-head"><div>
+        <div class="panel-title">Adherencia y aptitud mes a mes</div>
+        <div class="panel-desc">Planeadas vs evaluadas, aptas vs no aptas</div>
+      </div></div>
+      <div class="chart-wrap tall"><canvas id="chartAdhMes"></canvas></div>
+    </div>
+
+    <div class="panel" style="margin-top:18px">
+      <div class="panel-head"><div><div class="panel-title">Detalle mensual</div></div></div>
+      <table class="tbl" id="tblMes">
+        <thead><tr>
+          <th>Mes</th>
+          <th class="num">Planeadas</th>
+          <th class="num">Evaluadas</th>
+          <th class="num">Sin evaluar</th>
+          <th>Adherencia</th>
+          <th class="num">Aptas</th>
+          <th class="num">No aptas</th>
+          <th class="num">Hallazgos</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ INSPECCIONES ============ -->
+  <section class="tab-content" data-tab="inspecciones">
+    <div class="panel">
+      <div class="panel-head"><div>
+        <div class="panel-title">% Cumplimiento por ítem · Carretilla 1 vs Carretilla 2</div>
+        <div class="panel-desc">5 ítems evaluados en cada carretilla</div>
+      </div></div>
+      <div class="chart-wrap"><canvas id="chartItemsCumpl"></canvas></div>
+    </div>
+
+    <div class="panel" style="margin-top:18px">
+      <div class="panel-head"><div>
+        <div class="panel-title">Tabla detallada por ítem</div>
+        <div class="panel-desc">Cumplimiento separado para cada carretilla y combinado</div>
+      </div></div>
+      <table class="tbl" id="tblItems">
+        <thead><tr>
+          <th>Ítem inspeccionado</th>
+          <th class="num">C1 NO</th>
+          <th>C1 cumplimiento</th>
+          <th class="num">C2 NO</th>
+          <th>C2 cumplimiento</th>
+          <th class="num">Total NO</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ HALLAZGOS ============ -->
+  <section class="tab-content" data-tab="hallazgos">
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <div class="panel-title">Detalle de hallazgos · no conformidades en check list</div>
+          <div class="panel-desc">Cada incumplimiento individual con placa, fecha, carretilla, ítem y responsable</div>
+        </div>
+        <span class="tag tag-red mono" id="hallazgos-count">263 hallazgos</span>
+      </div>
+
+      <div class="grid-3" id="hallazgos-summary" style="margin-bottom:16px"></div>
+
+      <div class="search-bar">
+        <input type="text" id="search-h" placeholder="🔍 Buscar placa, ítem, responsable…">
+        <select id="filter-h-item"><option value="">Todos los ítems</option></select>
+        <select id="filter-h-carretilla">
+          <option value="">Ambas carretillas</option>
+          <option value="1">Carretilla 1</option>
+          <option value="2">Carretilla 2</option>
+        </select>
+        <select id="filter-h-mes"><option value="">Todos los meses</option></select>
+        <span class="count" id="h-shown"></span>
+      </div>
+
+      <div class="scroll-area">
+        <table class="tbl" id="tblHallazgos">
+          <thead><tr>
+            <th>Fecha</th>
+            <th>Placa</th>
+            <th>Carretilla</th>
+            <th>Ítem</th>
+            <th>Responsable</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PLACAS ============ -->
+  <section class="tab-content" data-tab="placas">
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <div class="panel-title">Análisis por placa · 90 placas operativas</div>
+          <div class="panel-desc">Ranking por hallazgos · busca por placa o responsable</div>
+        </div>
+        <span class="tag tag-blue mono" id="placas-count">90 placas</span>
+      </div>
+      <div class="search-bar">
+        <input type="text" id="search-placa" placeholder="🔍 Buscar placa o responsable…">
+        <select id="filter-placa-orden">
+          <option value="hallazgos">Ordenar por: Hallazgos (alto → bajo)</option>
+          <option value="no_aptas">Ordenar por: No aptas</option>
+          <option value="adherencia_asc">Ordenar por: Adherencia (baja → alta)</option>
+          <option value="cumplimiento_asc">Ordenar por: Cumplimiento (bajo → alto)</option>
+          <option value="placa">Ordenar por: Placa (A-Z)</option>
+        </select>
+        <span class="count" id="placa-shown"></span>
+      </div>
+      <div class="scroll-area">
+        <table class="tbl" id="tblPlacas">
+          <thead><tr>
+            <th>Placa</th>
+            <th>Responsable principal</th>
+            <th class="num">Planeadas</th>
+            <th class="num">Evaluadas</th>
+            <th>Adherencia</th>
+            <th class="num">No aptas</th>
+            <th class="num">Hallazgos</th>
+            <th>Cumplimiento</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESPONSABLES ============ -->
+  <section class="tab-content" data-tab="responsables">
+    <div class="grid-2">
+      <div class="panel">
+        <div class="panel-head"><div>
+          <div class="panel-title">Top 15 responsables por volumen</div>
+          <div class="panel-desc">Planeaciones realizadas</div>
+        </div></div>
+        <div class="chart-wrap xtall"><canvas id="chartTopResp"></canvas></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><div>
+          <div class="panel-title">Adherencia promedio por responsable</div>
+          <div class="panel-desc">Top 15 por volumen</div>
+        </div></div>
+        <div class="chart-wrap xtall"><canvas id="chartRespAdh"></canvas></div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:18px">
+      <div class="panel-head">
+        <div><div class="panel-title">Detalle por responsable</div></div>
+        <span class="tag tag-blue mono" id="resp-count">0 responsables</span>
+      </div>
+      <div class="search-bar">
+        <input type="text" id="search-resp" placeholder="🔍 Buscar responsable…">
+        <select id="filter-resp-orden">
+          <option value="planeadas">Ordenar por: Volumen (alto → bajo)</option>
+          <option value="hallazgos">Ordenar por: Hallazgos</option>
+          <option value="adherencia_asc">Ordenar por: Adherencia (baja → alta)</option>
+        </select>
+        <span class="count" id="resp-shown"></span>
+      </div>
+      <div class="scroll-area">
+        <table class="tbl" id="tblResp">
+          <thead><tr>
+            <th>Responsable</th>
+            <th class="num">Planeadas</th>
+            <th class="num">Evaluadas</th>
+            <th>Adherencia</th>
+            <th class="num">No aptas</th>
+            <th class="num">Hallazgos</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  
+
+  <!-- ============ NOVEDADES ============ -->
+  <section class="tab-content" data-tab="novedades">
+    <div class="grid-3" id="novedades-summary" style="margin-bottom:18px"></div>
+
+    <div class="grid-2-equal">
+      <div class="panel">
+        <div class="panel-head"><div>
+          <div class="panel-title">Novedades por mes</div>
+          <div class="panel-desc">Correctivas vs preventivas</div>
+        </div></div>
+        <div class="chart-wrap"><canvas id="chartNovMes"></canvas></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><div>
+          <div class="panel-title">Categorías de mantenimiento</div>
+          <div class="panel-desc">Tipo de intervención (puede haber múltiples por novedad)</div>
+        </div></div>
+        <div class="chart-wrap"><canvas id="chartNovCat"></canvas></div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:18px">
+      <div class="panel-head">
+        <div>
+          <div class="panel-title">Registro completo de novedades · 173 mantenimientos</div>
+          <div class="panel-desc">Filtros por tipo, estado, mes y búsqueda libre</div>
+        </div>
+        <span class="tag tag-orange mono" id="nov-count">173 novedades</span>
+      </div>
+      <div class="search-bar">
+        <input type="text" id="search-nov" placeholder="🔍 Buscar placa, detalle o responsable…">
+        <select id="filter-nov-tipo">
+          <option value="">Todos los tipos</option>
+          <option value="Correctivo">Correctivo</option>
+          <option value="Preventivo">Preventivo</option>
+        </select>
+        <select id="filter-nov-estado">
+          <option value="">Todos los estados</option>
+          <option value="Completado">Completado</option>
+          <option value="Sin completar">Sin completar</option>
+        </select>
+        <select id="filter-nov-mes"><option value="">Todos los meses</option></select>
+        <span class="count" id="nov-shown"></span>
+      </div>
+      <div class="scroll-area">
+        <table class="tbl" id="tblNov">
+          <thead><tr>
+            <th>#</th>
+            <th>F. identificación</th>
+            <th>F. cierre</th>
+            <th class="num">Días</th>
+            <th>Placa</th>
+            <th>Tipo</th>
+            <th>Detalle / Acción</th>
+            <th>Responsable</th>
+            <th>Estado</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  Auditoría SST · Check List & Novedades de Carretillas · CD Itagüí · Generado <span id="gen-date"></span>
+</footer>
+
+<script id="dataPayload" type="application/json">{"meta":{"cd":"CD Itagüí","regional":"Andes","periodo":"Enero – Mayo 2026","placas":90,"responsables":102},"kpi":{"planeaciones":3267,"evaluadas":2880,"sin_evaluar":387,"adherencia":88.2,"aptas":2707,"no_aptas":560,"pct_apto":82.9,"cumplimiento":99.1,"hallazgos":263,"cumple_count":28537,"novedades_total":173,"novedades_completadas":170,"novedades_pendientes":3,"pct_cierre":98.3,"correctivos":145,"preventivos":28,"tiempo_prom_dias":2.2},"por_mes":[{"mes":"Enero","planeadas":788,"evaluadas":699,"sin_evaluar":89,"adherencia":88.7,"aptas":657,"no_aptas":131,"cumplimiento":99.2,"hallazgos":59},{"mes":"Febrero","planeadas":802,"evaluadas":704,"sin_evaluar":98,"adherencia":87.8,"aptas":662,"no_aptas":140,"cumplimiento":99.0,"hallazgos":67},{"mes":"Marzo","planeadas":859,"evaluadas":764,"sin_evaluar":95,"adherencia":88.9,"aptas":718,"no_aptas":141,"cumplimiento":99.0,"hallazgos":75},{"mes":"Abril","planeadas":757,"evaluadas":659,"sin_evaluar":98,"adherencia":87.1,"aptas":619,"no_aptas":138,"cumplimiento":99.1,"hallazgos":58},{"mes":"Mayo","planeadas":61,"evaluadas":54,"sin_evaluar":7,"adherencia":88.5,"aptas":51,"no_aptas":10,"cumplimiento":99.3,"hallazgos":4}],"items":[{"item":"Cuenta con carretilla","key":"tiene_carretilla","c1_si":2880,"c1_no":0,"c1_pct":100.0,"c2_si":2880,"c2_no":0,"c2_pct":100.0,"total_no":0},{"item":"Etiqueta de inspección","key":"etiqueta","c1_si":2845,"c1_no":35,"c1_pct":98.8,"c2_si":2848,"c2_no":32,"c2_pct":98.9,"total_no":67},{"item":"Rodamientos en buen estado","key":"rodamientos","c1_si":2844,"c1_no":36,"c1_pct":98.8,"c2_si":2848,"c2_no":32,"c2_pct":98.9,"total_no":68},{"item":"Ruedas con aire suficiente","key":"ruedas","c1_si":2839,"c1_no":41,"c1_pct":98.6,"c2_si":2852,"c2_no":28,"c2_pct":99.0,"total_no":69},{"item":"Condiciones de uso (sin daños/golpes)","key":"condiciones","c1_si":2839,"c1_no":41,"c1_pct":98.6,"c2_si":2862,"c2_no":18,"c2_pct":99.4,"total_no":59}],"placas":[{"placa":"LCN198","planeadas":60,"evaluadas":52,"adherencia":86.7,"aptas":47,"no_aptas":13,"hallazgos":11,"cumplimiento":97.9,"responsable":"ERWID JESUS MEDINA CASTRO"},{"placa":"TMX335","planeadas":44,"evaluadas":43,"adherencia":97.7,"aptas":38,"no_aptas":6,"hallazgos":9,"cumplimiento":97.9,"responsable":"JAIME ANTONIO PEREZ AREIZA"},{"placa":"LGU379","planeadas":41,"evaluadas":36,"adherencia":87.8,"aptas":33,"no_aptas":8,"hallazgos":8,"cumplimiento":97.8,"responsable":"CARLOS ANTONIO MEDINA MORA"},{"placa":"LJS657","planeadas":46,"evaluadas":44,"adherencia":95.7,"aptas":39,"no_aptas":7,"hallazgos":8,"cumplimiento":98.2,"responsable":"DIEGO LEON MONTERROSA FLOREZ"},{"placa":"QJX799","planeadas":54,"evaluadas":41,"adherencia":75.9,"aptas":36,"no_aptas":18,"hallazgos":8,"cumplimiento":98.0,"responsable":"JUAN CAMILO MORALES MACIAS"},{"placa":"PSX837","planeadas":46,"evaluadas":41,"adherencia":89.1,"aptas":37,"no_aptas":9,"hallazgos":7,"cumplimiento":98.3,"responsable":"DIEGO JOSE RODRIGUEZ BENITEZ"},{"placa":"PSX929","planeadas":64,"evaluadas":60,"adherencia":93.8,"aptas":56,"no_aptas":8,"hallazgos":7,"cumplimiento":98.8,"responsable":"JESUS EDUARDO MENA MORENO"},{"placa":"VEK256","planeadas":44,"evaluadas":39,"adherencia":88.6,"aptas":33,"no_aptas":11,"hallazgos":7,"cumplimiento":98.2,"responsable":"ANDRES FELIPE ZAPATA RODRIGUEZ"},{"placa":"JTZ262","planeadas":45,"evaluadas":42,"adherencia":93.3,"aptas":37,"no_aptas":8,"hallazgos":6,"cumplimiento":98.6,"responsable":"ROGELIO DE JESUS ARANGO OSPINA"},{"placa":"JTZ264","planeadas":33,"evaluadas":29,"adherencia":87.9,"aptas":26,"no_aptas":7,"hallazgos":6,"cumplimiento":97.9,"responsable":"ERWID JESUS MEDINA CASTRO"},{"placa":"KVW121","planeadas":53,"evaluadas":47,"adherencia":88.7,"aptas":44,"no_aptas":9,"hallazgos":6,"cumplimiento":98.7,"responsable":"CARLOS ANTONIO MEDINA MORA"},{"placa":"KVW148","planeadas":47,"evaluadas":40,"adherencia":85.1,"aptas":37,"no_aptas":10,"hallazgos":6,"cumplimiento":98.5,"responsable":"CARLOS MARIO AGUIRRE LONDOÑO"},{"placa":"LGU374","planeadas":38,"evaluadas":33,"adherencia":86.8,"aptas":29,"no_aptas":9,"hallazgos":6,"cumplimiento":98.2,"responsable":"BANQUETH ARIAS JUAN JOSE"},{"placa":"LJS663","planeadas":58,"evaluadas":49,"adherencia":84.5,"aptas":45,"no_aptas":13,"hallazgos":6,"cumplimiento":98.8,"responsable":"DIEGO JOSE RODRIGUEZ BENITEZ"},{"placa":"LJT731","planeadas":47,"evaluadas":42,"adherencia":89.4,"aptas":39,"no_aptas":8,"hallazgos":6,"cumplimiento":98.6,"responsable":"DIEGO LEON MONTERROSA FLOREZ"},{"placa":"QJX761","planeadas":59,"evaluadas":50,"adherencia":84.7,"aptas":46,"no_aptas":13,"hallazgos":6,"cumplimiento":98.8,"responsable":"CARLOS MARIO AGUIRRE LONDOÑO"},{"placa":"TMV722","planeadas":43,"evaluadas":37,"adherencia":86.0,"aptas":33,"no_aptas":10,"hallazgos":6,"cumplimiento":98.4,"responsable":"FREDDY HERNAN LLANOS PANNESSO"},{"placa":"GUR494","planeadas":51,"evaluadas":46,"adherencia":90.2,"aptas":43,"no_aptas":8,"hallazgos":5,"cumplimiento":98.9,"responsable":"RODRIGO LUIS MARCHENA ARTEAGA"},{"placa":"JTZ261","planeadas":38,"evaluadas":34,"adherencia":89.5,"aptas":30,"no_aptas":8,"hallazgos":5,"cumplimiento":98.5,"responsable":"DIEGO JOSE RODRIGUEZ BENITEZ"},{"placa":"KSP234","planeadas":64,"evaluadas":54,"adherencia":84.4,"aptas":50,"no_aptas":14,"hallazgos":5,"cumplimiento":99.1,"responsable":"ANDRES EMILIO GUERRA CUADRADO"},{"placa":"LCN247","planeadas":44,"evaluadas":40,"adherencia":90.9,"aptas":37,"no_aptas":7,"hallazgos":5,"cumplimiento":98.8,"responsable":"MENDEZ MONSALVO TOMAS SEGUNDO"},{"placa":"LGU472","planeadas":25,"evaluadas":22,"adherencia":88.0,"aptas":19,"no_aptas":6,"hallazgos":5,"cumplimiento":97.7,"responsable":"ERWID JESUS MEDINA CASTRO"},{"placa":"LVY389","planeadas":11,"evaluadas":11,"adherencia":100.0,"aptas":8,"no_aptas":3,"hallazgos":5,"cumplimiento":95.5,"responsable":"ALEX FRANCISCO JIMENEZ SIBAJA"},{"placa":"QJX707","planeadas":62,"evaluadas":59,"adherencia":95.2,"aptas":56,"no_aptas":6,"hallazgos":5,"cumplimiento":99.2,"responsable":"FRANCISCO AQUILES DE LA OSSA APARICIO"},{"placa":"QJX800","planeadas":67,"evaluadas":60,"adherencia":89.6,"aptas":55,"no_aptas":12,"hallazgos":5,"cumplimiento":99.2,"responsable":"DIEGO LEON MONTERROSA FLOREZ"},{"placa":"TMX167","planeadas":61,"evaluadas":50,"adherencia":82.0,"aptas":46,"no_aptas":15,"hallazgos":5,"cumplimiento":99.0,"responsable":"JORGE ARMANDO OVIEDO MEDINA"},{"placa":"LCL722","planeadas":41,"evaluadas":37,"adherencia":90.2,"aptas":35,"no_aptas":6,"hallazgos":4,"cumplimiento":98.9,"responsable":"ANTONIO MENDEZ MONSALVE"},{"placa":"LCN260","planeadas":44,"evaluadas":42,"adherencia":95.5,"aptas":39,"no_aptas":5,"hallazgos":4,"cumplimiento":99.0,"responsable":"JESUS MANUEL ARRIETA PERALES"},{"placa":"LJS656","planeadas":42,"evaluadas":35,"adherencia":83.3,"aptas":32,"no_aptas":10,"hallazgos":4,"cumplimiento":98.9,"responsable":"WILLIAM ENRIQUE VARGAS  PACHECO"},{"placa":"PRZ369","planeadas":50,"evaluadas":46,"adherencia":92.0,"aptas":44,"no_aptas":6,"hallazgos":4,"cumplimiento":99.1,"responsable":"YEISON ANDRES GOMEZ PALOMINO"},{"placa":"PSX832","planeadas":67,"evaluadas":64,"adherencia":95.5,"aptas":61,"no_aptas":6,"hallazgos":4,"cumplimiento":99.4,"responsable":"JAIME ANTONIO PEREZ AREIZA"},{"placa":"STZ834","planeadas":33,"evaluadas":32,"adherencia":97.0,"aptas":30,"no_aptas":3,"hallazgos":4,"cumplimiento":98.8,"responsable":"DANIEL ALFONSO RUIZ PADILLA"},{"placa":"TMV721","planeadas":52,"evaluadas":47,"adherencia":90.4,"aptas":44,"no_aptas":8,"hallazgos":4,"cumplimiento":99.1,"responsable":"ANDRES FELIPE  CASARRUBIA GOEZ"},{"placa":"VCL954","planeadas":51,"evaluadas":43,"adherencia":84.3,"aptas":41,"no_aptas":10,"hallazgos":4,"cumplimiento":99.1,"responsable":"JOSE FRANCISCO CORONADO GAMEZ"},{"placa":"VEN939","planeadas":49,"evaluadas":44,"adherencia":89.8,"aptas":41,"no_aptas":8,"hallazgos":4,"cumplimiento":99.1,"responsable":"ALEX FRANCISCO JIMENEZ SIBAJA"},{"placa":"JTX922","planeadas":63,"evaluadas":56,"adherencia":88.9,"aptas":53,"no_aptas":10,"hallazgos":3,"cumplimiento":99.5,"responsable":"RAFAEL RICARDO GUZMAN ALBIS"},{"placa":"KVW117","planeadas":34,"evaluadas":32,"adherencia":94.1,"aptas":29,"no_aptas":5,"hallazgos":3,"cumplimiento":99.1,"responsable":"ANDRES EMILIO GUERRA CUADRADO"},{"placa":"KVW145","planeadas":49,"evaluadas":43,"adherencia":87.8,"aptas":41,"no_aptas":8,"hallazgos":3,"cumplimiento":99.3,"responsable":"JUAN MANUEL LEAL PERALTA"},{"placa":"LJS655","planeadas":48,"evaluadas":42,"adherencia":87.5,"aptas":40,"no_aptas":8,"hallazgos":3,"cumplimiento":99.3,"responsable":"JESUS EDUARDO MENA MORENO"},{"placa":"LJS661","planeadas":52,"evaluadas":47,"adherencia":90.4,"aptas":45,"no_aptas":7,"hallazgos":3,"cumplimiento":99.4,"responsable":"RAFAEL RICARDO GUZMAN ALBIS"},{"placa":"PRY839","planeadas":17,"evaluadas":14,"adherencia":82.4,"aptas":13,"no_aptas":4,"hallazgos":3,"cumplimiento":97.9,"responsable":"DANIEL ALBERTO BASSA HERAZO"},{"placa":"SZY584","planeadas":13,"evaluadas":13,"adherencia":100.0,"aptas":12,"no_aptas":1,"hallazgos":3,"cumplimiento":97.7,"responsable":"ANGEL ANTONIO IGUARAN PINEDA"},{"placa":"TMV726","planeadas":46,"evaluadas":42,"adherencia":91.3,"aptas":39,"no_aptas":7,"hallazgos":3,"cumplimiento":99.3,"responsable":"RONALD ALEXANDER PAREDES PINTO"},{"placa":"TMX337","planeadas":1,"evaluadas":1,"adherencia":100.0,"aptas":0,"no_aptas":1,"hallazgos":3,"cumplimiento":70.0,"responsable":"CESAR  ENRIQUE VERTEL  LAMBERTINO"},{"placa":"JTY075","planeadas":12,"evaluadas":9,"adherencia":75.0,"aptas":7,"no_aptas":5,"hallazgos":2,"cumplimiento":97.8,"responsable":"CARLOS ANTONIO MEDINA MORA"},{"placa":"JTZ265","planeadas":41,"evaluadas":32,"adherencia":78.0,"aptas":31,"no_aptas":10,"hallazgos":2,"cumplimiento":99.4,"responsable":"FRANCISCO AQUILES DE LA OSSA APARICIO"},{"placa":"KVW139","planeadas":21,"evaluadas":17,"adherencia":81.0,"aptas":15,"no_aptas":6,"hallazgos":2,"cumplimiento":98.8,"responsable":"ALEX FRANCISCO JIMENEZ SIBAJA"},{"placa":"LCM446","planeadas":48,"evaluadas":44,"adherencia":91.7,"aptas":42,"no_aptas":6,"hallazgos":2,"cumplimiento":99.5,"responsable":"JAILER OCARMAN NAVARRO"},{"placa":"LGU376","planeadas":48,"evaluadas":40,"adherencia":83.3,"aptas":39,"no_aptas":9,"hallazgos":2,"cumplimiento":99.5,"responsable":"ERWID JESUS MEDINA CASTRO"},{"placa":"PRZ368","planeadas":52,"evaluadas":45,"adherencia":86.5,"aptas":44,"no_aptas":8,"hallazgos":2,"cumplimiento":99.6,"responsable":"FRANCISCO AQUILES DE LA OSSA APARICIO"},{"placa":"PSX927","planeadas":61,"evaluadas":54,"adherencia":88.5,"aptas":53,"no_aptas":8,"hallazgos":2,"cumplimiento":99.6,"responsable":"ALEX FRANCISCO JIMENEZ SIBAJA"},{"placa":"PSY065","planeadas":34,"evaluadas":32,"adherencia":94.1,"aptas":31,"no_aptas":3,"hallazgos":2,"cumplimiento":99.4,"responsable":"ANTONIO MENDEZ MONSALVE"},{"placa":"TMV731","planeadas":32,"evaluadas":30,"adherencia":93.8,"aptas":28,"no_aptas":4,"hallazgos":2,"cumplimiento":99.3,"responsable":"CARLOS MARIO AGUIRRE LONDOÑO"},{"placa":"TMV888","planeadas":48,"evaluadas":46,"adherencia":95.8,"aptas":44,"no_aptas":4,"hallazgos":2,"cumplimiento":99.6,"responsable":"RODRIGO LUIS MARCHENA ARTEAGA"},{"placa":"TMX797","planeadas":43,"evaluadas":34,"adherencia":79.1,"aptas":33,"no_aptas":10,"hallazgos":2,"cumplimiento":99.4,"responsable":"ALEX FRANCISCO JIMENEZ SIBAJA"},{"placa":"JYO709","planeadas":10,"evaluadas":10,"adherencia":100.0,"aptas":9,"no_aptas":1,"hallazgos":1,"cumplimiento":99.0,"responsable":"ANDRES FELIPE ZAPATA RODRIGUEZ"},{"placa":"KSP218","planeadas":50,"evaluadas":44,"adherencia":88.0,"aptas":43,"no_aptas":7,"hallazgos":1,"cumplimiento":99.8,"responsable":"ANTONIO MENDEZ MONSALVE"},{"placa":"KVW119","planeadas":36,"evaluadas":27,"adherencia":75.0,"aptas":26,"no_aptas":10,"hallazgos":1,"cumplimiento":99.6,"responsable":"ANTONIO MENDEZ MONSALVE"},{"placa":"KVW146","planeadas":17,"evaluadas":16,"adherencia":94.1,"aptas":15,"no_aptas":2,"hallazgos":1,"cumplimiento":99.4,"responsable":"ANTONIO MENDEZ MONSALVE"},{"placa":"LCL744","planeadas":30,"evaluadas":22,"adherencia":73.3,"aptas":21,"no_aptas":9,"hallazgos":1,"cumplimiento":99.5,"responsable":"ANDRES FELIPE  ARAGON RUEDA"},{"placa":"LCM449","planeadas":46,"evaluadas":42,"adherencia":91.3,"aptas":41,"no_aptas":5,"hallazgos":1,"cumplimiento":99.8,"responsable":"RONALDO JOSE MUNZON GUEVARA"},{"placa":"LGU479","planeadas":40,"evaluadas":32,"adherencia":80.0,"aptas":31,"no_aptas":9,"hallazgos":1,"cumplimiento":99.7,"responsable":"CARLOS ANTONIO MEDINA MORA"},{"placa":"LJS658","planeadas":58,"evaluadas":49,"adherencia":84.5,"aptas":48,"no_aptas":10,"hallazgos":1,"cumplimiento":99.8,"responsable":"ALEX FRANCISCO JIMENEZ SIBAJA"},{"placa":"LJS659","planeadas":57,"evaluadas":52,"adherencia":91.2,"aptas":51,"no_aptas":6,"hallazgos":1,"cumplimiento":99.8,"responsable":"JAILER OCARMAN NAVARRO"},{"placa":"PRZ367","planeadas":41,"evaluadas":39,"adherencia":95.1,"aptas":38,"no_aptas":3,"hallazgos":1,"cumplimiento":99.7,"responsable":"CARLOS ANTONIO MEDINA MORA"},{"placa":"PSX835","planeadas":52,"evaluadas":44,"adherencia":84.6,"aptas":43,"no_aptas":9,"hallazgos":1,"cumplimiento":99.8,"responsable":"LUIS ALFONSO PEREZ CONDE"},{"placa":"QJX418","planeadas":54,"evaluadas":44,"adherencia":81.5,"aptas":43,"no_aptas":11,"hallazgos":1,"cumplimiento":99.8,"responsable":"CARLOS MARIO AGUIRRE LONDOÑO"},{"placa":"TMX165","planeadas":55,"evaluadas":45,"adherencia":81.8,"aptas":44,"no_aptas":11,"hallazgos":1,"cumplimiento":99.8,"responsable":"RONALDO JOSE MUNZON GUEVARA"},{"placa":"VEJ945","planeadas":41,"evaluadas":35,"adherencia":85.4,"aptas":34,"no_aptas":7,"hallazgos":1,"cumplimiento":99.7,"responsable":"RAFAEL RICARDO GUZMAN ALBIS"},{"placa":"GUR490","planeadas":26,"evaluadas":24,"adherencia":92.3,"aptas":24,"no_aptas":2,"hallazgos":0,"cumplimiento":100.0,"responsable":"ANDRES FELIPE  ARAGON RUEDA"},{"placa":"GUR491","planeadas":26,"evaluadas":23,"adherencia":88.5,"aptas":23,"no_aptas":3,"hallazgos":0,"cumplimiento":100.0,"responsable":"DANIEL ALFONSO RUIZ PADILLA"},{"placa":"JKU108","planeadas":3,"evaluadas":3,"adherencia":100.0,"aptas":3,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0,"responsable":"JHON FREDY GOMEZ CUARTAS"},{"placa":"JYO030","planeadas":2,"evaluadas":2,"adherencia":100.0,"aptas":2,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0,"responsable":"CARLOS ANTONIO MEDINA MORA"},{"placa":"JYO795","planeadas":3,"evaluadas":2,"adherencia":66.7,"aptas":2,"no_aptas":1,"hallazgos":0,"cumplimiento":100.0,"responsable":"ANGEL ANTONIO IGUARAN PINEDA"},{"placa":"KVW110","planeadas":23,"evaluadas":21,"adherencia":91.3,"aptas":21,"no_aptas":2,"hallazgos":0,"cumplimiento":100.0,"responsable":"BANQUETH ARIAS JUAN JOSE"},{"placa":"KVW116","planeadas":13,"evaluadas":11,"adherencia":84.6,"aptas":11,"no_aptas":2,"hallazgos":0,"cumplimiento":100.0,"responsable":"CRISTIAN CAMILO  IBARRA SEPULVEDA"},{"placa":"LGU469","planeadas":25,"evaluadas":23,"adherencia":92.0,"aptas":23,"no_aptas":2,"hallazgos":0,"cumplimiento":100.0,"responsable":"YORLIN DE JESUS PEREA LONDOÑO"},{"placa":"LGU478","planeadas":1,"evaluadas":1,"adherencia":100.0,"aptas":1,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0,"responsable":"JESUS MANUEL ARRIETA PERALES"},{"placa":"LGU489","planeadas":12,"evaluadas":10,"adherencia":83.3,"aptas":10,"no_aptas":2,"hallazgos":0,"cumplimiento":100.0,"responsable":"CARLOS MARIO AGUIRRE LONDOÑO"},{"placa":"SWM986","planeadas":1,"evaluadas":1,"adherencia":100.0,"aptas":1,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0,"responsable":"MARLON PEREZ MUNZON"},{"placa":"SZY598","planeadas":10,"evaluadas":8,"adherencia":80.0,"aptas":8,"no_aptas":2,"hallazgos":0,"cumplimiento":100.0,"responsable":"DANIEL ALFONSO RUIZ PADILLA"},{"placa":"TLR105","planeadas":2,"evaluadas":2,"adherencia":100.0,"aptas":2,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0,"responsable":"FRANCISCO AQUILES DE LA OSSA APARICIO"},{"placa":"TMV727","planeadas":1,"evaluadas":1,"adherencia":100.0,"aptas":1,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0,"responsable":"JAIME ANTONIO PEREZ AREIZA"},{"placa":"TMV732","planeadas":1,"evaluadas":1,"adherencia":100.0,"aptas":1,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0,"responsable":"RAFAEL RICARDO GUZMAN ALBIS"},{"placa":"TMX168","planeadas":3,"evaluadas":2,"adherencia":66.7,"aptas":2,"no_aptas":1,"hallazgos":0,"cumplimiento":100.0,"responsable":"JORGE ARMANDO OVIEDO MEDINA"},{"placa":"TMX663","planeadas":1,"evaluadas":1,"adherencia":100.0,"aptas":1,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0,"responsable":"JUAN PABLO TRUJILLO DIAZ "},{"placa":"TRL300","planeadas":1,"evaluadas":1,"adherencia":100.0,"aptas":1,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0,"responsable":"DIEGO ARMANDO ARRIETA  ORDOÑEZ"},{"placa":"VCN586","planeadas":1,"evaluadas":1,"adherencia":100.0,"aptas":1,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0,"responsable":"ANTONIO MENDEZ MONSALVE"},{"placa":"VEL183","planeadas":42,"evaluadas":39,"adherencia":92.9,"aptas":39,"no_aptas":3,"hallazgos":0,"cumplimiento":100.0,"responsable":"RAFAEL RICARDO GUZMAN ALBIS"},{"placa":"VEP917","planeadas":46,"evaluadas":38,"adherencia":82.6,"aptas":38,"no_aptas":8,"hallazgos":0,"cumplimiento":100.0,"responsable":"RAFAEL RICARDO GUZMAN ALBIS"}],"responsables":[{"responsable":"CARLOS ANTONIO MEDINA MORA","planeadas":95,"evaluadas":83,"adherencia":87.4,"aptas":78,"no_aptas":17,"hallazgos":6,"cumplimiento":99.3},{"responsable":"RAFAEL RICARDO GUZMAN ALBIS","planeadas":90,"evaluadas":73,"adherencia":81.1,"aptas":70,"no_aptas":20,"hallazgos":5,"cumplimiento":99.3},{"responsable":"JESUS MANUEL ARRIETA PERALES","planeadas":83,"evaluadas":72,"adherencia":86.7,"aptas":67,"no_aptas":16,"hallazgos":10,"cumplimiento":98.6},{"responsable":"BANQUETH ARIAS JUAN JOSE","planeadas":79,"evaluadas":72,"adherencia":91.1,"aptas":71,"no_aptas":8,"hallazgos":1,"cumplimiento":99.9},{"responsable":"DIEGO JOSE RODRIGUEZ BENITEZ","planeadas":78,"evaluadas":72,"adherencia":92.3,"aptas":64,"no_aptas":14,"hallazgos":11,"cumplimiento":98.5},{"responsable":"ERWID JESUS MEDINA CASTRO","planeadas":76,"evaluadas":68,"adherencia":89.5,"aptas":65,"no_aptas":11,"hallazgos":5,"cumplimiento":99.3},{"responsable":"ANTONIO MENDEZ MONSALVE","planeadas":74,"evaluadas":69,"adherencia":93.2,"aptas":66,"no_aptas":8,"hallazgos":4,"cumplimiento":99.4},{"responsable":"FRANCISCO AQUILES DE LA OSSA APARICIO","planeadas":74,"evaluadas":63,"adherencia":85.1,"aptas":60,"no_aptas":14,"hallazgos":5,"cumplimiento":99.2},{"responsable":"YORLIN DE JESUS PEREA LONDOÑO","planeadas":73,"evaluadas":66,"adherencia":90.4,"aptas":62,"no_aptas":11,"hallazgos":5,"cumplimiento":99.2},{"responsable":"JAIME ANTONIO PEREZ AREIZA","planeadas":72,"evaluadas":66,"adherencia":91.7,"aptas":62,"no_aptas":10,"hallazgos":9,"cumplimiento":98.6},{"responsable":"WILLIAM ENRIQUE VARGAS  PACHECO","planeadas":70,"evaluadas":66,"adherencia":94.3,"aptas":64,"no_aptas":6,"hallazgos":2,"cumplimiento":99.7},{"responsable":"JHON FREDY GOMEZ CUARTAS","planeadas":69,"evaluadas":55,"adherencia":79.7,"aptas":51,"no_aptas":18,"hallazgos":6,"cumplimiento":98.9},{"responsable":"PEDRO FELIPE MOSQUERA MOSQUERA","planeadas":68,"evaluadas":62,"adherencia":91.2,"aptas":59,"no_aptas":9,"hallazgos":5,"cumplimiento":99.2},{"responsable":"FREDDY HERNAN LLANOS PANNESSO","planeadas":67,"evaluadas":58,"adherencia":86.6,"aptas":54,"no_aptas":13,"hallazgos":7,"cumplimiento":98.8},{"responsable":"RONALDO JOSE MUNZON GUEVARA","planeadas":67,"evaluadas":62,"adherencia":92.5,"aptas":59,"no_aptas":8,"hallazgos":7,"cumplimiento":98.9},{"responsable":"ANDRES FELIPE ZAPATA RODRIGUEZ","planeadas":66,"evaluadas":58,"adherencia":87.9,"aptas":54,"no_aptas":12,"hallazgos":5,"cumplimiento":99.1},{"responsable":"LUIS GUSTAVO MONTES QUIROZ","planeadas":64,"evaluadas":52,"adherencia":81.2,"aptas":48,"no_aptas":16,"hallazgos":6,"cumplimiento":98.8},{"responsable":"MARLON PEREZ MUNZON","planeadas":64,"evaluadas":57,"adherencia":89.1,"aptas":52,"no_aptas":12,"hallazgos":9,"cumplimiento":98.4},{"responsable":"MENDEZ MONSALVO TOMAS SEGUNDO","planeadas":64,"evaluadas":58,"adherencia":90.6,"aptas":53,"no_aptas":11,"hallazgos":8,"cumplimiento":98.6},{"responsable":"ANDRES EMILIO GUERRA CUADRADO","planeadas":63,"evaluadas":51,"adherencia":81.0,"aptas":45,"no_aptas":18,"hallazgos":8,"cumplimiento":98.4},{"responsable":"DANIEL ALFONSO RUIZ PADILLA","planeadas":63,"evaluadas":53,"adherencia":84.1,"aptas":51,"no_aptas":12,"hallazgos":5,"cumplimiento":99.1},{"responsable":"LUIS ALFONSO PEREZ CONDE","planeadas":63,"evaluadas":56,"adherencia":88.9,"aptas":52,"no_aptas":11,"hallazgos":4,"cumplimiento":99.3},{"responsable":"DIEGO LEON MONTERROSA FLOREZ","planeadas":62,"evaluadas":54,"adherencia":87.1,"aptas":51,"no_aptas":11,"hallazgos":4,"cumplimiento":99.3},{"responsable":"JESUS EDUARDO MENA MORENO","planeadas":61,"evaluadas":54,"adherencia":88.5,"aptas":50,"no_aptas":11,"hallazgos":4,"cumplimiento":99.3},{"responsable":"RONALD ALEXANDER PAREDES PINTO","planeadas":61,"evaluadas":56,"adherencia":91.8,"aptas":52,"no_aptas":9,"hallazgos":6,"cumplimiento":98.9},{"responsable":"JORGE ARMANDO OVIEDO MEDINA","planeadas":60,"evaluadas":50,"adherencia":83.3,"aptas":49,"no_aptas":11,"hallazgos":1,"cumplimiento":99.8},{"responsable":"JOSE MIGUEL MIREYES BLANCO","planeadas":60,"evaluadas":56,"adherencia":93.3,"aptas":56,"no_aptas":4,"hallazgos":0,"cumplimiento":100.0},{"responsable":"ALEX FRANCISCO JIMENEZ SIBAJA","planeadas":59,"evaluadas":56,"adherencia":94.9,"aptas":54,"no_aptas":5,"hallazgos":3,"cumplimiento":99.5},{"responsable":"CARLOS MARIO AGUIRRE LONDOÑO","planeadas":59,"evaluadas":49,"adherencia":83.1,"aptas":49,"no_aptas":10,"hallazgos":0,"cumplimiento":100.0},{"responsable":"ROGELIO DE JESUS ARANGO OSPINA","planeadas":59,"evaluadas":55,"adherencia":93.2,"aptas":51,"no_aptas":8,"hallazgos":5,"cumplimiento":99.1},{"responsable":"ANGEL ANTONIO IGUARAN PINEDA","planeadas":57,"evaluadas":50,"adherencia":87.7,"aptas":47,"no_aptas":10,"hallazgos":5,"cumplimiento":99.0},{"responsable":"YEISON ANDRES GOMEZ PALOMINO","planeadas":55,"evaluadas":45,"adherencia":81.8,"aptas":41,"no_aptas":14,"hallazgos":8,"cumplimiento":98.2},{"responsable":"JUAN CAMILO MORALES MACIAS","planeadas":54,"evaluadas":45,"adherencia":83.3,"aptas":41,"no_aptas":13,"hallazgos":6,"cumplimiento":98.7},{"responsable":"JAILER OCARMAN NAVARRO","planeadas":53,"evaluadas":47,"adherencia":88.7,"aptas":43,"no_aptas":10,"hallazgos":4,"cumplimiento":99.1},{"responsable":"DIEGO ARMANDO ARRIETA  ORDOÑEZ","planeadas":52,"evaluadas":43,"adherencia":82.7,"aptas":39,"no_aptas":13,"hallazgos":6,"cumplimiento":98.6},{"responsable":"ANDRES FELIPE  ARAGON RUEDA","planeadas":51,"evaluadas":44,"adherencia":86.3,"aptas":40,"no_aptas":11,"hallazgos":6,"cumplimiento":98.6},{"responsable":"CRISTIAN CAMILO  IBARRA SEPULVEDA","planeadas":51,"evaluadas":45,"adherencia":88.2,"aptas":42,"no_aptas":9,"hallazgos":7,"cumplimiento":98.4},{"responsable":"JOSE FRANCISCO CORONADO GAMEZ","planeadas":51,"evaluadas":46,"adherencia":90.2,"aptas":45,"no_aptas":6,"hallazgos":3,"cumplimiento":99.3},{"responsable":"YONAIRO MENCO SANCHEZ","planeadas":49,"evaluadas":43,"adherencia":87.8,"aptas":41,"no_aptas":8,"hallazgos":3,"cumplimiento":99.3},{"responsable":"GUSTAVO ADOLFO RIOS MADRID","planeadas":46,"evaluadas":42,"adherencia":91.3,"aptas":41,"no_aptas":5,"hallazgos":1,"cumplimiento":99.8},{"responsable":"JHON ESTEVAN MADERA VANEGAS","planeadas":46,"evaluadas":41,"adherencia":89.1,"aptas":39,"no_aptas":7,"hallazgos":4,"cumplimiento":99.0},{"responsable":"RODRIGO LUIS MARCHENA ARTEAGA","planeadas":46,"evaluadas":40,"adherencia":87.0,"aptas":36,"no_aptas":10,"hallazgos":5,"cumplimiento":98.8},{"responsable":"JHONATAN DAVID  ROMAÑA PEREA ","planeadas":44,"evaluadas":43,"adherencia":97.7,"aptas":40,"no_aptas":4,"hallazgos":3,"cumplimiento":99.3},{"responsable":"WANDERLEY MAZO VERA","planeadas":44,"evaluadas":35,"adherencia":79.5,"aptas":33,"no_aptas":11,"hallazgos":2,"cumplimiento":99.4},{"responsable":"DANIEL ALBERTO BASSA HERAZO","planeadas":40,"evaluadas":38,"adherencia":95.0,"aptas":35,"no_aptas":5,"hallazgos":5,"cumplimiento":98.7},{"responsable":"JUAN MANUEL LEAL PERALTA","planeadas":38,"evaluadas":31,"adherencia":81.6,"aptas":31,"no_aptas":7,"hallazgos":0,"cumplimiento":100.0},{"responsable":"LUIS FERNANDO SANCHEZ UBARNE","planeadas":38,"evaluadas":30,"adherencia":78.9,"aptas":29,"no_aptas":9,"hallazgos":3,"cumplimiento":99.0},{"responsable":"JUAN PABLO TRUJILLO DIAZ ","planeadas":32,"evaluadas":29,"adherencia":90.6,"aptas":27,"no_aptas":5,"hallazgos":3,"cumplimiento":99.0},{"responsable":"CESAR  ENRIQUE VERTEL  LAMBERTINO","planeadas":31,"evaluadas":28,"adherencia":90.3,"aptas":25,"no_aptas":6,"hallazgos":5,"cumplimiento":98.2},{"responsable":"ANDRES FELIPE  CASARRUBIA GOEZ","planeadas":29,"evaluadas":28,"adherencia":96.6,"aptas":27,"no_aptas":2,"hallazgos":1,"cumplimiento":99.6},{"responsable":"WILLIAM RODOLFO PEDRAZA VARGAS","planeadas":26,"evaluadas":23,"adherencia":88.5,"aptas":22,"no_aptas":4,"hallazgos":3,"cumplimiento":98.7},{"responsable":"JUAN ESTEBAN  VILLA ZULETA","planeadas":25,"evaluadas":24,"adherencia":96.0,"aptas":21,"no_aptas":4,"hallazgos":4,"cumplimiento":98.3},{"responsable":"WALTER SAMUEL ARANGO CONDE","planeadas":24,"evaluadas":19,"adherencia":79.2,"aptas":18,"no_aptas":6,"hallazgos":1,"cumplimiento":99.5},{"responsable":"NICOLAS ANTONIO OQUENDO SEGURO","planeadas":21,"evaluadas":20,"adherencia":95.2,"aptas":20,"no_aptas":1,"hallazgos":0,"cumplimiento":100.0},{"responsable":"OMAR JESUS CORREA AMAYA","planeadas":20,"evaluadas":19,"adherencia":95.0,"aptas":16,"no_aptas":4,"hallazgos":5,"cumplimiento":97.4},{"responsable":"EDWARD  SAMIR MOYA MENA","planeadas":18,"evaluadas":14,"adherencia":77.8,"aptas":13,"no_aptas":5,"hallazgos":1,"cumplimiento":99.3},{"responsable":"JOHNATAN ENRIQUE ARREAZA BARRETO","planeadas":17,"evaluadas":12,"adherencia":70.6,"aptas":12,"no_aptas":5,"hallazgos":0,"cumplimiento":100.0},{"responsable":"LUIS GABRIEL GRANADOS URRUTIA","planeadas":15,"evaluadas":15,"adherencia":100.0,"aptas":15,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0},{"responsable":"LUIS ALFONSO FERNANDEZ MAZUERA","planeadas":14,"evaluadas":12,"adherencia":85.7,"aptas":12,"no_aptas":2,"hallazgos":0,"cumplimiento":100.0},{"responsable":"GERSON MORALES ALZATE","planeadas":13,"evaluadas":11,"adherencia":84.6,"aptas":10,"no_aptas":3,"hallazgos":2,"cumplimiento":98.2},{"responsable":"ROBERTO DE JESUS MUÑOZ ARROYAVE","planeadas":13,"evaluadas":13,"adherencia":100.0,"aptas":12,"no_aptas":1,"hallazgos":1,"cumplimiento":99.2},{"responsable":"JAIME EDUARDO GOEZ PAJARO","planeadas":12,"evaluadas":12,"adherencia":100.0,"aptas":10,"no_aptas":2,"hallazgos":3,"cumplimiento":97.5},{"responsable":"LHAYONEL JOSE PACHECO ORTIZ","planeadas":11,"evaluadas":9,"adherencia":81.8,"aptas":9,"no_aptas":2,"hallazgos":0,"cumplimiento":100.0},{"responsable":"ANDY YAMID PINO CUELLO","planeadas":7,"evaluadas":4,"adherencia":57.1,"aptas":3,"no_aptas":4,"hallazgos":1,"cumplimiento":97.5},{"responsable":"SANTIAGO VASQUEZ JARAMILLO","planeadas":7,"evaluadas":6,"adherencia":85.7,"aptas":5,"no_aptas":2,"hallazgos":1,"cumplimiento":98.3},{"responsable":"JUAN GABRIEL GARCIA ALTAMIRANDA","planeadas":4,"evaluadas":4,"adherencia":100.0,"aptas":4,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0},{"responsable":"MAYKEL ALEXANDER GARCIA PUERTA","planeadas":4,"evaluadas":3,"adherencia":75.0,"aptas":3,"no_aptas":1,"hallazgos":0,"cumplimiento":100.0},{"responsable":"JORDAN JOSE MELENDEZ TERAN","planeadas":3,"evaluadas":3,"adherencia":100.0,"aptas":3,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0},{"responsable":"DANY DANIEL MAZA ROCHA","planeadas":2,"evaluadas":2,"adherencia":100.0,"aptas":2,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0},{"responsable":"GUERRERO VILLEGAS MARTIN ENRIQUE","planeadas":2,"evaluadas":2,"adherencia":100.0,"aptas":2,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0},{"responsable":"HILBERSON MONTOYA CANO","planeadas":2,"evaluadas":2,"adherencia":100.0,"aptas":2,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0},{"responsable":"JAIRO ANDRES TRUJILLO SILVA","planeadas":2,"evaluadas":2,"adherencia":100.0,"aptas":2,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0},{"responsable":"JAISON JIMENEZ CARABALLO ","planeadas":2,"evaluadas":1,"adherencia":50.0,"aptas":1,"no_aptas":1,"hallazgos":0,"cumplimiento":100.0},{"responsable":"JUAN  DAVID  MANRIQUE AVILA","planeadas":2,"evaluadas":2,"adherencia":100.0,"aptas":2,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0},{"responsable":"JUAN FERNEY MONSALVE CANO","planeadas":2,"evaluadas":2,"adherencia":100.0,"aptas":2,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0},{"responsable":"MARLON GONZALEZ FONSECA","planeadas":2,"evaluadas":2,"adherencia":100.0,"aptas":2,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0},{"responsable":"WILSON DAVID ARANGO UÑATE","planeadas":2,"evaluadas":2,"adherencia":100.0,"aptas":2,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0},{"responsable":"ALVARO ANTONIO COLORADO AGUILAR","planeadas":1,"evaluadas":1,"adherencia":100.0,"aptas":0,"no_aptas":1,"hallazgos":1,"cumplimiento":90.0},{"responsable":"BENJAMIN BERTEL MARTINEZ","planeadas":1,"evaluadas":1,"adherencia":100.0,"aptas":0,"no_aptas":1,"hallazgos":1,"cumplimiento":90.0},{"responsable":"CARLOS ARTURO GALLO CASTRO","planeadas":1,"evaluadas":1,"adherencia":100.0,"aptas":1,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0},{"responsable":"CARLOS MANUEL ACOSTA JARABA","planeadas":1,"evaluadas":1,"adherencia":100.0,"aptas":1,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0},{"responsable":"CRISTIAN DAVID MARTINEZ POLO","planeadas":1,"evaluadas":1,"adherencia":100.0,"aptas":0,"no_aptas":1,"hallazgos":2,"cumplimiento":80.0},{"responsable":"DANIEL ANTONIO ARIAS RUIZ","planeadas":1,"evaluadas":1,"adherencia":100.0,"aptas":1,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0},{"responsable":"DIEGO ANDRES RANGEL RAMOS","planeadas":1,"evaluadas":1,"adherencia":100.0,"aptas":1,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0},{"responsable":"ELVER FABIAN JULIO PEREZ","planeadas":1,"evaluadas":1,"adherencia":100.0,"aptas":1,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0},{"responsable":"ESTEBAN JIMENEZ LONDOÑO","planeadas":1,"evaluadas":1,"adherencia":100.0,"aptas":0,"no_aptas":1,"hallazgos":1,"cumplimiento":90.0},{"responsable":"ESTIVINSON VALOYES PALOMEQUE","planeadas":1,"evaluadas":1,"adherencia":100.0,"aptas":1,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0},{"responsable":"IVAN HERRERA BELLO","planeadas":1,"evaluadas":1,"adherencia":100.0,"aptas":1,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0},{"responsable":"JADINSON ESNEY SIMANCA PADRON","planeadas":1,"evaluadas":1,"adherencia":100.0,"aptas":1,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0},{"responsable":"JHONATAN ESTIVEN FERNANDEZ SUAREZ","planeadas":1,"evaluadas":1,"adherencia":100.0,"aptas":1,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0},{"responsable":"JOSE RONALDO BERMUDEZ VELASQUEZ","planeadas":1,"evaluadas":1,"adherencia":100.0,"aptas":1,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0},{"responsable":"JUAN GABRIEL JARAMILLO TORO","planeadas":1,"evaluadas":1,"adherencia":100.0,"aptas":1,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0},{"responsable":"JUAN PABLO CORREA ALVAREZ","planeadas":1,"evaluadas":1,"adherencia":100.0,"aptas":1,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0},{"responsable":"LEONARDO ANTONIO RODRIGUEZ AGAMEZ","planeadas":1,"evaluadas":1,"adherencia":100.0,"aptas":1,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0},{"responsable":"LUIS DAVID ORTEGA RODRIGUEZ","planeadas":1,"evaluadas":1,"adherencia":100.0,"aptas":1,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0},{"responsable":"LUIS DAVID ROBLEDO CORDOBA","planeadas":1,"evaluadas":1,"adherencia":100.0,"aptas":1,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0},{"responsable":"NELSON AUGUSTO CORREA CRUZ","planeadas":1,"evaluadas":1,"adherencia":100.0,"aptas":1,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0},{"responsable":"NELSON DANIEL SOLANO BARRERA","planeadas":1,"evaluadas":1,"adherencia":100.0,"aptas":1,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0},{"responsable":"OMAR ABRAHAM DIMAS PEREZ","planeadas":1,"evaluadas":1,"adherencia":100.0,"aptas":1,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0},{"responsable":"OSCAR DAVID OYOLA GARCEZ","planeadas":1,"evaluadas":1,"adherencia":100.0,"aptas":1,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0},{"responsable":"RICHARD JOSE  MOSQUERA FERREIRA","planeadas":1,"evaluadas":1,"adherencia":100.0,"aptas":1,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0},{"responsable":"YEISON ANDRES CONTRERAS ZUÑIGA ","planeadas":1,"evaluadas":1,"adherencia":100.0,"aptas":1,"no_aptas":0,"hallazgos":0,"cumplimiento":100.0}],"hallazgos":[{"fecha":"2026-01-02","placa":"KSP218","responsable":"ANTONIO MENDEZ MONSALVE","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-01-03","placa":"GUR494","responsable":"RODRIGO LUIS MARCHENA ARTEAGA","carretilla":1,"item":"Etiqueta de inspección"},{"fecha":"2026-01-03","placa":"GUR494","responsable":"RODRIGO LUIS MARCHENA ARTEAGA","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-01-03","placa":"PSX837","responsable":"YORLIN DE JESUS PEREA LONDOÑO","carretilla":2,"item":"Ruedas con aire suficiente"},{"fecha":"2026-01-05","placa":"TMV731","responsable":"ANGEL ANTONIO IGUARAN PINEDA","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-01-08","placa":"LCN198","responsable":"LUIS GUSTAVO MONTES QUIROZ","carretilla":2,"item":"Rodamientos en buen estado"},{"fecha":"2026-01-08","placa":"LCN198","responsable":"LUIS GUSTAVO MONTES QUIROZ","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-01-09","placa":"LGU379","responsable":"ANGEL ANTONIO IGUARAN PINEDA","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-01-09","placa":"LGU379","responsable":"ANGEL ANTONIO IGUARAN PINEDA","carretilla":2,"item":"Rodamientos en buen estado"},{"fecha":"2026-01-09","placa":"LGU379","responsable":"ANGEL ANTONIO IGUARAN PINEDA","carretilla":2,"item":"Ruedas con aire suficiente"},{"fecha":"2026-01-09","placa":"TMV731","responsable":"MENDEZ MONSALVO TOMAS SEGUNDO","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-01-09","placa":"VEK256","responsable":"JUAN ESTEBAN  VILLA ZULETA","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-01-09","placa":"QJX800","responsable":"JAIME EDUARDO GOEZ PAJARO","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-01-09","placa":"LGU379","responsable":"MENDEZ MONSALVO TOMAS SEGUNDO","carretilla":2,"item":"Etiqueta de inspección"},{"fecha":"2026-01-09","placa":"LGU379","responsable":"MENDEZ MONSALVO TOMAS SEGUNDO","carretilla":2,"item":"Rodamientos en buen estado"},{"fecha":"2026-01-10","placa":"LVY389","responsable":"JUAN PABLO TRUJILLO DIAZ ","carretilla":2,"item":"Rodamientos en buen estado"},{"fecha":"2026-01-10","placa":"LVY389","responsable":"JUAN PABLO TRUJILLO DIAZ ","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-01-12","placa":"KVW145","responsable":"MENDEZ MONSALVO TOMAS SEGUNDO","carretilla":2,"item":"Etiqueta de inspección"},{"fecha":"2026-01-12","placa":"KVW121","responsable":"ANDRES FELIPE ZAPATA RODRIGUEZ","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-01-12","placa":"KVW121","responsable":"ANDRES FELIPE ZAPATA RODRIGUEZ","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-01-14","placa":"PSX837","responsable":"JESUS EDUARDO MENA MORENO","carretilla":2,"item":"Ruedas con aire suficiente"},{"fecha":"2026-01-14","placa":"VCL954","responsable":"JESUS MANUEL ARRIETA PERALES","carretilla":2,"item":"Etiqueta de inspección"},{"fecha":"2026-01-14","placa":"VCL954","responsable":"JESUS MANUEL ARRIETA PERALES","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-01-15","placa":"LJS657","responsable":"CESAR  ENRIQUE VERTEL  LAMBERTINO","carretilla":2,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-01-16","placa":"PRZ367","responsable":"SANTIAGO VASQUEZ JARAMILLO","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-01-17","placa":"PSX832","responsable":"ANDRES EMILIO GUERRA CUADRADO","carretilla":2,"item":"Rodamientos en buen estado"},{"fecha":"2026-01-19","placa":"STZ834","responsable":"JESUS MANUEL ARRIETA PERALES","carretilla":1,"item":"Etiqueta de inspección"},{"fecha":"2026-01-19","placa":"STZ834","responsable":"JESUS MANUEL ARRIETA PERALES","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-01-20","placa":"TMV721","responsable":"ANGEL ANTONIO IGUARAN PINEDA","carretilla":2,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-01-20","placa":"JTZ262","responsable":"ROGELIO DE JESUS ARANGO OSPINA","carretilla":2,"item":"Etiqueta de inspección"},{"fecha":"2026-01-20","placa":"PSX832","responsable":"JAIME ANTONIO PEREZ AREIZA","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-01-20","placa":"PSX832","responsable":"JAIME ANTONIO PEREZ AREIZA","carretilla":2,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-01-21","placa":"TMV726","responsable":"ROBERTO DE JESUS MUÑOZ ARROYAVE","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-01-21","placa":"KVW148","responsable":"PEDRO FELIPE MOSQUERA MOSQUERA","carretilla":1,"item":"Etiqueta de inspección"},{"fecha":"2026-01-21","placa":"LCN247","responsable":"LUIS ALFONSO PEREZ CONDE","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-01-22","placa":"TMV888","responsable":"RODRIGO LUIS MARCHENA ARTEAGA","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-01-23","placa":"LGU374","responsable":"ALVARO ANTONIO COLORADO AGUILAR","carretilla":2,"item":"Ruedas con aire suficiente"},{"fecha":"2026-01-23","placa":"LJS655","responsable":"JESUS EDUARDO MENA MORENO","carretilla":1,"item":"Etiqueta de inspección"},{"fecha":"2026-01-24","placa":"PSX929","responsable":"YEISON ANDRES GOMEZ PALOMINO","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-01-24","placa":"TMV721","responsable":"MARLON PEREZ MUNZON","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-01-26","placa":"LJS657","responsable":"ANDRES EMILIO GUERRA CUADRADO","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-01-26","placa":"KSP234","responsable":"JESUS EDUARDO MENA MORENO","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-01-29","placa":"TMX167","responsable":"RONALDO JOSE MUNZON GUEVARA","carretilla":2,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-01-29","placa":"PSX837","responsable":"MARLON PEREZ MUNZON","carretilla":2,"item":"Rodamientos en buen estado"},{"fecha":"2026-01-29","placa":"PSX837","responsable":"MARLON PEREZ MUNZON","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-01-29","placa":"PSX837","responsable":"MARLON PEREZ MUNZON","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-01-30","placa":"TMX167","responsable":"ANTONIO MENDEZ MONSALVE","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-01-30","placa":"TMX167","responsable":"ANTONIO MENDEZ MONSALVE","carretilla":2,"item":"Ruedas con aire suficiente"},{"fecha":"2026-01-30","placa":"KVW148","responsable":"WILLIAM RODOLFO PEDRAZA VARGAS","carretilla":2,"item":"Etiqueta de inspección"},{"fecha":"2026-01-30","placa":"KVW148","responsable":"WILLIAM RODOLFO PEDRAZA VARGAS","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-01-30","placa":"KVW148","responsable":"WILLIAM RODOLFO PEDRAZA VARGAS","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-01-30","placa":"JTZ265","responsable":"YORLIN DE JESUS PEREA LONDOÑO","carretilla":2,"item":"Rodamientos en buen estado"},{"fecha":"2026-01-30","placa":"JTZ265","responsable":"YORLIN DE JESUS PEREA LONDOÑO","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-01-30","placa":"TMX335","responsable":"JAIME ANTONIO PEREZ AREIZA","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-01-30","placa":"TMX335","responsable":"JAIME ANTONIO PEREZ AREIZA","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-01-30","placa":"QJX799","responsable":"DIEGO JOSE RODRIGUEZ BENITEZ","carretilla":2,"item":"Etiqueta de inspección"},{"fecha":"2026-01-31","placa":"LCN198","responsable":"WANDERLEY MAZO VERA","carretilla":2,"item":"Rodamientos en buen estado"},{"fecha":"2026-01-31","placa":"KVW117","responsable":"ANDRES EMILIO GUERRA CUADRADO","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-01-31","placa":"LJS663","responsable":"JUAN PABLO TRUJILLO DIAZ ","carretilla":2,"item":"Rodamientos en buen estado"},{"fecha":"2026-02-02","placa":"JTY075","responsable":"YORLIN DE JESUS PEREA LONDOÑO","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-02-02","placa":"JTY075","responsable":"JUAN ESTEBAN  VILLA ZULETA","carretilla":2,"item":"Ruedas con aire suficiente"},{"fecha":"2026-02-04","placa":"LJT731","responsable":"RONALD ALEXANDER PAREDES PINTO","carretilla":2,"item":"Rodamientos en buen estado"},{"fecha":"2026-02-04","placa":"LJT731","responsable":"RONALD ALEXANDER PAREDES PINTO","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-02-04","placa":"LJT731","responsable":"RONALD ALEXANDER PAREDES PINTO","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-02-04","placa":"TMX167","responsable":"CESAR  ENRIQUE VERTEL  LAMBERTINO","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-02-04","placa":"VEK256","responsable":"ANDY YAMID PINO CUELLO","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-02-05","placa":"TMV722","responsable":"BENJAMIN BERTEL MARTINEZ","carretilla":1,"item":"Etiqueta de inspección"},{"fecha":"2026-02-05","placa":"TMX337","responsable":"CESAR  ENRIQUE VERTEL  LAMBERTINO","carretilla":1,"item":"Etiqueta de inspección"},{"fecha":"2026-02-05","placa":"TMX337","responsable":"CESAR  ENRIQUE VERTEL  LAMBERTINO","carretilla":2,"item":"Rodamientos en buen estado"},{"fecha":"2026-02-05","placa":"TMX337","responsable":"CESAR  ENRIQUE VERTEL  LAMBERTINO","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-02-05","placa":"LGU479","responsable":"JHON FREDY GOMEZ CUARTAS","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-02-05","placa":"LJS663","responsable":"FREDDY HERNAN LLANOS PANNESSO","carretilla":2,"item":"Rodamientos en buen estado"},{"fecha":"2026-02-05","placa":"LJS663","responsable":"FREDDY HERNAN LLANOS PANNESSO","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-02-06","placa":"JTX922","responsable":"ROGELIO DE JESUS ARANGO OSPINA","carretilla":1,"item":"Etiqueta de inspección"},{"fecha":"2026-02-06","placa":"JYO709","responsable":"DANIEL ALBERTO BASSA HERAZO","carretilla":2,"item":"Etiqueta de inspección"},{"fecha":"2026-02-06","placa":"LJS663","responsable":"JUAN CAMILO MORALES MACIAS","carretilla":1,"item":"Etiqueta de inspección"},{"fecha":"2026-02-06","placa":"LJS663","responsable":"JUAN CAMILO MORALES MACIAS","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-02-07","placa":"KVW117","responsable":"YONAIRO MENCO SANCHEZ","carretilla":2,"item":"Ruedas con aire suficiente"},{"fecha":"2026-02-10","placa":"PSX929","responsable":"LUIS FERNANDO SANCHEZ UBARNE","carretilla":1,"item":"Etiqueta de inspección"},{"fecha":"2026-02-10","placa":"PSX929","responsable":"LUIS FERNANDO SANCHEZ UBARNE","carretilla":2,"item":"Etiqueta de inspección"},{"fecha":"2026-02-10","placa":"PSX929","responsable":"LUIS FERNANDO SANCHEZ UBARNE","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-02-10","placa":"LCN247","responsable":"MENDEZ MONSALVO TOMAS SEGUNDO","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-02-10","placa":"LCN247","responsable":"MENDEZ MONSALVO TOMAS SEGUNDO","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-02-11","placa":"LCM446","responsable":"ANTONIO MENDEZ MONSALVE","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-02-11","placa":"LGU376","responsable":"RAFAEL RICARDO GUZMAN ALBIS","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-02-11","placa":"LGU376","responsable":"RAFAEL RICARDO GUZMAN ALBIS","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-02-11","placa":"JTZ261","responsable":"CARLOS ANTONIO MEDINA MORA","carretilla":2,"item":"Rodamientos en buen estado"},{"fecha":"2026-02-11","placa":"KVW119","responsable":"RONALD ALEXANDER PAREDES PINTO","carretilla":2,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-02-11","placa":"LJS656","responsable":"WILLIAM ENRIQUE VARGAS  PACHECO","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-02-12","placa":"LCL722","responsable":"CARLOS ANTONIO MEDINA MORA","carretilla":2,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-02-13","placa":"JTZ262","responsable":"RODRIGO LUIS MARCHENA ARTEAGA","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-02-13","placa":"KVW145","responsable":"JAIME EDUARDO GOEZ PAJARO","carretilla":2,"item":"Etiqueta de inspección"},{"fecha":"2026-02-13","placa":"KVW145","responsable":"JAIME EDUARDO GOEZ PAJARO","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-02-13","placa":"JTX922","responsable":"RAFAEL RICARDO GUZMAN ALBIS","carretilla":2,"item":"Etiqueta de inspección"},{"fecha":"2026-02-14","placa":"LCN198","responsable":"MARLON PEREZ MUNZON","carretilla":1,"item":"Etiqueta de inspección"},{"fecha":"2026-02-14","placa":"LCN198","responsable":"MARLON PEREZ MUNZON","carretilla":2,"item":"Etiqueta de inspección"},{"fecha":"2026-02-14","placa":"LCN198","responsable":"MARLON PEREZ MUNZON","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-02-16","placa":"TMX335","responsable":"JOSE FRANCISCO CORONADO GAMEZ","carretilla":1,"item":"Etiqueta de inspección"},{"fecha":"2026-02-16","placa":"TMX335","responsable":"JOSE FRANCISCO CORONADO GAMEZ","carretilla":2,"item":"Etiqueta de inspección"},{"fecha":"2026-02-16","placa":"TMX335","responsable":"JOSE FRANCISCO CORONADO GAMEZ","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-02-16","placa":"LJS655","responsable":"JUAN ESTEBAN  VILLA ZULETA","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-02-16","placa":"LJS655","responsable":"JUAN ESTEBAN  VILLA ZULETA","carretilla":2,"item":"Rodamientos en buen estado"},{"fecha":"2026-02-16","placa":"PRZ369","responsable":"YEISON ANDRES GOMEZ PALOMINO","carretilla":1,"item":"Etiqueta de inspección"},{"fecha":"2026-02-16","placa":"PRZ369","responsable":"YEISON ANDRES GOMEZ PALOMINO","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-02-16","placa":"PRZ369","responsable":"YEISON ANDRES GOMEZ PALOMINO","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-02-16","placa":"VEJ945","responsable":"JUAN CAMILO MORALES MACIAS","carretilla":1,"item":"Etiqueta de inspección"},{"fecha":"2026-02-17","placa":"PRZ368","responsable":"CRISTIAN CAMILO  IBARRA SEPULVEDA","carretilla":2,"item":"Etiqueta de inspección"},{"fecha":"2026-02-17","placa":"PRZ368","responsable":"CRISTIAN CAMILO  IBARRA SEPULVEDA","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-02-20","placa":"VEN939","responsable":"DIEGO ARMANDO ARRIETA  ORDOÑEZ","carretilla":2,"item":"Etiqueta de inspección"},{"fecha":"2026-02-23","placa":"KVW139","responsable":"JAILER OCARMAN NAVARRO","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-02-23","placa":"LJS656","responsable":"JAIME ANTONIO PEREZ AREIZA","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-02-23","placa":"LJS656","responsable":"JAIME ANTONIO PEREZ AREIZA","carretilla":2,"item":"Ruedas con aire suficiente"},{"fecha":"2026-02-23","placa":"QJX800","responsable":"DIEGO JOSE RODRIGUEZ BENITEZ","carretilla":2,"item":"Rodamientos en buen estado"},{"fecha":"2026-02-24","placa":"VEK256","responsable":"WANDERLEY MAZO VERA","carretilla":2,"item":"Rodamientos en buen estado"},{"fecha":"2026-02-24","placa":"KVW146","responsable":"ANDRES EMILIO GUERRA CUADRADO","carretilla":2,"item":"Rodamientos en buen estado"},{"fecha":"2026-02-24","placa":"VEN939","responsable":"ANDRES EMILIO GUERRA CUADRADO","carretilla":1,"item":"Etiqueta de inspección"},{"fecha":"2026-02-24","placa":"VEN939","responsable":"ANDRES EMILIO GUERRA CUADRADO","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-02-25","placa":"STZ834","responsable":"YEISON ANDRES GOMEZ PALOMINO","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-02-25","placa":"STZ834","responsable":"YEISON ANDRES GOMEZ PALOMINO","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-02-26","placa":"JTZ261","responsable":"MARLON PEREZ MUNZON","carretilla":2,"item":"Ruedas con aire suficiente"},{"fecha":"2026-02-26","placa":"LJT731","responsable":"YONAIRO MENCO SANCHEZ","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-02-26","placa":"LJT731","responsable":"YONAIRO MENCO SANCHEZ","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-02-27","placa":"JTZ261","responsable":"FREDDY HERNAN LLANOS PANNESSO","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-02-27","placa":"JTZ261","responsable":"FREDDY HERNAN LLANOS PANNESSO","carretilla":2,"item":"Rodamientos en buen estado"},{"fecha":"2026-02-28","placa":"LGU374","responsable":"MENDEZ MONSALVO TOMAS SEGUNDO","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-02-28","placa":"LGU374","responsable":"MENDEZ MONSALVO TOMAS SEGUNDO","carretilla":2,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-03-02","placa":"TMX797","responsable":"DIEGO ARMANDO ARRIETA  ORDOÑEZ","carretilla":1,"item":"Etiqueta de inspección"},{"fecha":"2026-03-02","placa":"TMX797","responsable":"DIEGO ARMANDO ARRIETA  ORDOÑEZ","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-03-02","placa":"LCN260","responsable":"JHONATAN DAVID  ROMAÑA PEREA ","carretilla":2,"item":"Ruedas con aire suficiente"},{"fecha":"2026-03-02","placa":"PRY839","responsable":"DANIEL ALBERTO BASSA HERAZO","carretilla":1,"item":"Etiqueta de inspección"},{"fecha":"2026-03-02","placa":"PRY839","responsable":"DANIEL ALBERTO BASSA HERAZO","carretilla":2,"item":"Etiqueta de inspección"},{"fecha":"2026-03-02","placa":"PRY839","responsable":"DANIEL ALBERTO BASSA HERAZO","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-03-03","placa":"VEK256","responsable":"LUIS ALFONSO PEREZ CONDE","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-03-03","placa":"QJX761","responsable":"JESUS MANUEL ARRIETA PERALES","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-03-03","placa":"QJX761","responsable":"JESUS MANUEL ARRIETA PERALES","carretilla":2,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-03-05","placa":"QJX799","responsable":"LUIS ALFONSO PEREZ CONDE","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-03-05","placa":"LCN260","responsable":"ANDRES FELIPE  ARAGON RUEDA","carretilla":2,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-03-06","placa":"JTZ264","responsable":"LUIS GUSTAVO MONTES QUIROZ","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-03-06","placa":"JTZ264","responsable":"LUIS GUSTAVO MONTES QUIROZ","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-03-06","placa":"LJS663","responsable":"JORGE ARMANDO OVIEDO MEDINA","carretilla":2,"item":"Etiqueta de inspección"},{"fecha":"2026-03-06","placa":"KVW121","responsable":"ANDRES FELIPE  ARAGON RUEDA","carretilla":1,"item":"Etiqueta de inspección"},{"fecha":"2026-03-06","placa":"KVW121","responsable":"ANDRES FELIPE  ARAGON RUEDA","carretilla":2,"item":"Ruedas con aire suficiente"},{"fecha":"2026-03-06","placa":"KVW121","responsable":"ANDRES FELIPE  ARAGON RUEDA","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-03-06","placa":"LJS658","responsable":"YORLIN DE JESUS PEREA LONDOÑO","carretilla":2,"item":"Rodamientos en buen estado"},{"fecha":"2026-03-07","placa":"KSP234","responsable":"JUAN CAMILO MORALES MACIAS","carretilla":1,"item":"Etiqueta de inspección"},{"fecha":"2026-03-07","placa":"KSP234","responsable":"JUAN CAMILO MORALES MACIAS","carretilla":2,"item":"Etiqueta de inspección"},{"fecha":"2026-03-07","placa":"LCN260","responsable":"OMAR JESUS CORREA AMAYA","carretilla":1,"item":"Etiqueta de inspección"},{"fecha":"2026-03-07","placa":"LCN260","responsable":"OMAR JESUS CORREA AMAYA","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-03-07","placa":"VEN939","responsable":"CARLOS ANTONIO MEDINA MORA","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-03-07","placa":"KVW139","responsable":"WILLIAM ENRIQUE VARGAS  PACHECO","carretilla":2,"item":"Ruedas con aire suficiente"},{"fecha":"2026-03-09","placa":"LCL722","responsable":"RONALDO JOSE MUNZON GUEVARA","carretilla":1,"item":"Etiqueta de inspección"},{"fecha":"2026-03-09","placa":"LCL722","responsable":"RONALDO JOSE MUNZON GUEVARA","carretilla":2,"item":"Etiqueta de inspección"},{"fecha":"2026-03-09","placa":"LCL722","responsable":"RONALDO JOSE MUNZON GUEVARA","carretilla":2,"item":"Ruedas con aire suficiente"},{"fecha":"2026-03-10","placa":"LGU379","responsable":"DANIEL ALFONSO RUIZ PADILLA","carretilla":2,"item":"Rodamientos en buen estado"},{"fecha":"2026-03-10","placa":"LGU379","responsable":"DANIEL ALFONSO RUIZ PADILLA","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-03-10","placa":"LGU379","responsable":"DANIEL ALFONSO RUIZ PADILLA","carretilla":2,"item":"Ruedas con aire suficiente"},{"fecha":"2026-03-10","placa":"PSY065","responsable":"DIEGO JOSE RODRIGUEZ BENITEZ","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-03-10","placa":"PSY065","responsable":"DIEGO JOSE RODRIGUEZ BENITEZ","carretilla":2,"item":"Ruedas con aire suficiente"},{"fecha":"2026-03-10","placa":"TMV888","responsable":"RONALD ALEXANDER PAREDES PINTO","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-03-11","placa":"LGU374","responsable":"DIEGO JOSE RODRIGUEZ BENITEZ","carretilla":2,"item":"Rodamientos en buen estado"},{"fecha":"2026-03-11","placa":"LGU374","responsable":"DIEGO JOSE RODRIGUEZ BENITEZ","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-03-12","placa":"VEK256","responsable":"LUIS GUSTAVO MONTES QUIROZ","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-03-13","placa":"KVW117","responsable":"ANDRES FELIPE ZAPATA RODRIGUEZ","carretilla":2,"item":"Etiqueta de inspección"},{"fecha":"2026-03-13","placa":"TMX335","responsable":"RONALD ALEXANDER PAREDES PINTO","carretilla":1,"item":"Etiqueta de inspección"},{"fecha":"2026-03-14","placa":"SZY584","responsable":"RONALDO JOSE MUNZON GUEVARA","carretilla":1,"item":"Etiqueta de inspección"},{"fecha":"2026-03-14","placa":"SZY584","responsable":"RONALDO JOSE MUNZON GUEVARA","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-03-14","placa":"SZY584","responsable":"RONALDO JOSE MUNZON GUEVARA","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-03-16","placa":"PSX929","responsable":"DANIEL ALBERTO BASSA HERAZO","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-03-16","placa":"KVW121","responsable":"ANDRES FELIPE  ARAGON RUEDA","carretilla":2,"item":"Etiqueta de inspección"},{"fecha":"2026-03-16","placa":"LGU374","responsable":"DIEGO JOSE RODRIGUEZ BENITEZ","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-03-17","placa":"JTZ262","responsable":"ROGELIO DE JESUS ARANGO OSPINA","carretilla":2,"item":"Rodamientos en buen estado"},{"fecha":"2026-03-17","placa":"QJX800","responsable":"DIEGO LEON MONTERROSA FLOREZ","carretilla":1,"item":"Etiqueta de inspección"},{"fecha":"2026-03-17","placa":"KVW148","responsable":"FRANCISCO AQUILES DE LA OSSA APARICIO","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-03-17","placa":"KVW148","responsable":"FRANCISCO AQUILES DE LA OSSA APARICIO","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-03-18","placa":"JTZ264","responsable":"ALEX FRANCISCO JIMENEZ SIBAJA","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-03-18","placa":"JTZ264","responsable":"ALEX FRANCISCO JIMENEZ SIBAJA","carretilla":2,"item":"Rodamientos en buen estado"},{"fecha":"2026-03-18","placa":"TMV721","responsable":"JHON FREDY GOMEZ CUARTAS","carretilla":2,"item":"Rodamientos en buen estado"},{"fecha":"2026-03-18","placa":"TMV721","responsable":"JHON FREDY GOMEZ CUARTAS","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-03-18","placa":"QJX799","responsable":"FRANCISCO AQUILES DE LA OSSA APARICIO","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-03-18","placa":"QJX799","responsable":"FRANCISCO AQUILES DE LA OSSA APARICIO","carretilla":2,"item":"Rodamientos en buen estado"},{"fecha":"2026-03-19","placa":"QJX761","responsable":"ALEX FRANCISCO JIMENEZ SIBAJA","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-03-19","placa":"LCN247","responsable":"RAFAEL RICARDO GUZMAN ALBIS","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-03-19","placa":"LCN247","responsable":"RAFAEL RICARDO GUZMAN ALBIS","carretilla":2,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-03-19","placa":"LGU472","responsable":"JHON ESTEVAN MADERA VANEGAS","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-03-19","placa":"LGU472","responsable":"JHON ESTEVAN MADERA VANEGAS","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-03-19","placa":"LGU472","responsable":"JHON ESTEVAN MADERA VANEGAS","carretilla":2,"item":"Ruedas con aire suficiente"},{"fecha":"2026-03-19","placa":"PSX832","responsable":"JHONATAN DAVID  ROMAÑA PEREA ","carretilla":2,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-03-20","placa":"JTZ262","responsable":"ANDRES EMILIO GUERRA CUADRADO","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-03-20","placa":"JTZ262","responsable":"ANDRES EMILIO GUERRA CUADRADO","carretilla":2,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-03-20","placa":"LCL744","responsable":"ESTEBAN JIMENEZ LONDOÑO","carretilla":2,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-03-21","placa":"GUR494","responsable":"JHON FREDY GOMEZ CUARTAS","carretilla":2,"item":"Etiqueta de inspección"},{"fecha":"2026-03-21","placa":"GUR494","responsable":"JHON FREDY GOMEZ CUARTAS","carretilla":2,"item":"Ruedas con aire suficiente"},{"fecha":"2026-03-21","placa":"LVY389","responsable":"JUAN CAMILO MORALES MACIAS","carretilla":1,"item":"Etiqueta de inspección"},{"fecha":"2026-03-23","placa":"PSX927","responsable":"CRISTIAN CAMILO  IBARRA SEPULVEDA","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-03-23","placa":"PSX927","responsable":"CRISTIAN CAMILO  IBARRA SEPULVEDA","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-03-23","placa":"TMV726","responsable":"CARLOS ANTONIO MEDINA MORA","carretilla":1,"item":"Etiqueta de inspección"},{"fecha":"2026-03-27","placa":"LJS657","responsable":"DIEGO LEON MONTERROSA FLOREZ","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-03-27","placa":"LJS657","responsable":"DIEGO LEON MONTERROSA FLOREZ","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-03-30","placa":"QJX761","responsable":"GUSTAVO ADOLFO RIOS MADRID","carretilla":2,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-03-31","placa":"JTZ264","responsable":"DIEGO ARMANDO ARRIETA  ORDOÑEZ","carretilla":2,"item":"Etiqueta de inspección"},{"fecha":"2026-03-31","placa":"JTZ264","responsable":"DIEGO ARMANDO ARRIETA  ORDOÑEZ","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-04-01","placa":"PSX837","responsable":"DIEGO JOSE RODRIGUEZ BENITEZ","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-04-01","placa":"PSX837","responsable":"DIEGO JOSE RODRIGUEZ BENITEZ","carretilla":2,"item":"Ruedas con aire suficiente"},{"fecha":"2026-04-04","placa":"LJS657","responsable":"JAIME ANTONIO PEREZ AREIZA","carretilla":1,"item":"Etiqueta de inspección"},{"fecha":"2026-04-04","placa":"LJS657","responsable":"JAIME ANTONIO PEREZ AREIZA","carretilla":2,"item":"Rodamientos en buen estado"},{"fecha":"2026-04-04","placa":"LJS657","responsable":"JAIME ANTONIO PEREZ AREIZA","carretilla":2,"item":"Ruedas con aire suficiente"},{"fecha":"2026-04-04","placa":"JTZ262","responsable":"FREDDY HERNAN LLANOS PANNESSO","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-04-04","placa":"LGU472","responsable":"ERWID JESUS MEDINA CASTRO","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-04-06","placa":"QJX799","responsable":"OMAR JESUS CORREA AMAYA","carretilla":2,"item":"Rodamientos en buen estado"},{"fecha":"2026-04-06","placa":"QJX799","responsable":"OMAR JESUS CORREA AMAYA","carretilla":2,"item":"Ruedas con aire suficiente"},{"fecha":"2026-04-07","placa":"LCM449","responsable":"WALTER SAMUEL ARANGO CONDE","carretilla":1,"item":"Etiqueta de inspección"},{"fecha":"2026-04-07","placa":"TMX167","responsable":"JAILER OCARMAN NAVARRO","carretilla":2,"item":"Etiqueta de inspección"},{"fecha":"2026-04-08","placa":"QJX800","responsable":"OMAR JESUS CORREA AMAYA","carretilla":1,"item":"Etiqueta de inspección"},{"fecha":"2026-04-08","placa":"QJX707","responsable":"ERWID JESUS MEDINA CASTRO","carretilla":2,"item":"Etiqueta de inspección"},{"fecha":"2026-04-08","placa":"QJX707","responsable":"ERWID JESUS MEDINA CASTRO","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-04-08","placa":"QJX707","responsable":"ERWID JESUS MEDINA CASTRO","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-04-08","placa":"GUR494","responsable":"JHON ESTEVAN MADERA VANEGAS","carretilla":2,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-04-09","placa":"LCM446","responsable":"JAILER OCARMAN NAVARRO","carretilla":2,"item":"Etiqueta de inspección"},{"fecha":"2026-04-10","placa":"PSX835","responsable":"LUIS ALFONSO PEREZ CONDE","carretilla":2,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-04-11","placa":"JTZ261","responsable":"LUIS GUSTAVO MONTES QUIROZ","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-04-11","placa":"QJX799","responsable":"DANIEL ALFONSO RUIZ PADILLA","carretilla":1,"item":"Etiqueta de inspección"},{"fecha":"2026-04-11","placa":"QJX799","responsable":"DANIEL ALFONSO RUIZ PADILLA","carretilla":2,"item":"Rodamientos en buen estado"},{"fecha":"2026-04-11","placa":"LJS659","responsable":"JAILER OCARMAN NAVARRO","carretilla":2,"item":"Ruedas con aire suficiente"},{"fecha":"2026-04-11","placa":"LGU472","responsable":"JHONATAN DAVID  ROMAÑA PEREA ","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-04-14","placa":"TMX335","responsable":"ROGELIO DE JESUS ARANGO OSPINA","carretilla":2,"item":"Rodamientos en buen estado"},{"fecha":"2026-04-14","placa":"TMX335","responsable":"ROGELIO DE JESUS ARANGO OSPINA","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-04-15","placa":"QJX800","responsable":"DIEGO JOSE RODRIGUEZ BENITEZ","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-04-16","placa":"TMV722","responsable":"CRISTIAN CAMILO  IBARRA SEPULVEDA","carretilla":2,"item":"Rodamientos en buen estado"},{"fecha":"2026-04-16","placa":"TMV722","responsable":"CRISTIAN CAMILO  IBARRA SEPULVEDA","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-04-16","placa":"TMV722","responsable":"CRISTIAN CAMILO  IBARRA SEPULVEDA","carretilla":2,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-04-17","placa":"LVY389","responsable":"FREDDY HERNAN LLANOS PANNESSO","carretilla":2,"item":"Etiqueta de inspección"},{"fecha":"2026-04-17","placa":"LVY389","responsable":"FREDDY HERNAN LLANOS PANNESSO","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-04-18","placa":"QJX761","responsable":"GERSON MORALES ALZATE","carretilla":2,"item":"Etiqueta de inspección"},{"fecha":"2026-04-18","placa":"QJX761","responsable":"GERSON MORALES ALZATE","carretilla":2,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-04-18","placa":"LCN198","responsable":"PEDRO FELIPE MOSQUERA MOSQUERA","carretilla":2,"item":"Etiqueta de inspección"},{"fecha":"2026-04-18","placa":"LCN198","responsable":"PEDRO FELIPE MOSQUERA MOSQUERA","carretilla":2,"item":"Ruedas con aire suficiente"},{"fecha":"2026-04-20","placa":"KSP234","responsable":"ERWID JESUS MEDINA CASTRO","carretilla":1,"item":"Etiqueta de inspección"},{"fecha":"2026-04-22","placa":"LCN198","responsable":"JESUS MANUEL ARRIETA PERALES","carretilla":1,"item":"Etiqueta de inspección"},{"fecha":"2026-04-22","placa":"LCN198","responsable":"JESUS MANUEL ARRIETA PERALES","carretilla":2,"item":"Etiqueta de inspección"},{"fecha":"2026-04-22","placa":"LCN198","responsable":"JESUS MANUEL ARRIETA PERALES","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-04-22","placa":"VEK256","responsable":"PEDRO FELIPE MOSQUERA MOSQUERA","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-04-22","placa":"VEK256","responsable":"PEDRO FELIPE MOSQUERA MOSQUERA","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-04-22","placa":"LJS661","responsable":"DIEGO JOSE RODRIGUEZ BENITEZ","carretilla":1,"item":"Rodamientos en buen estado"},{"fecha":"2026-04-23","placa":"TMX165","responsable":"ANDRES FELIPE  CASARRUBIA GOEZ","carretilla":2,"item":"Ruedas con aire suficiente"},{"fecha":"2026-04-23","placa":"PSX929","responsable":"CRISTIAN DAVID MARTINEZ POLO","carretilla":1,"item":"Etiqueta de inspección"},{"fecha":"2026-04-23","placa":"PSX929","responsable":"CRISTIAN DAVID MARTINEZ POLO","carretilla":2,"item":"Ruedas con aire suficiente"},{"fecha":"2026-04-24","placa":"VCL954","responsable":"CARLOS ANTONIO MEDINA MORA","carretilla":2,"item":"Etiqueta de inspección"},{"fecha":"2026-04-24","placa":"VCL954","responsable":"CARLOS ANTONIO MEDINA MORA","carretilla":2,"item":"Rodamientos en buen estado"},{"fecha":"2026-04-24","placa":"TMX335","responsable":"JHON FREDY GOMEZ CUARTAS","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-04-25","placa":"LJS656","responsable":"JESUS EDUARDO MENA MORENO","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-04-25","placa":"TMV722","responsable":"FRANCISCO AQUILES DE LA OSSA APARICIO","carretilla":2,"item":"Ruedas con aire suficiente"},{"fecha":"2026-04-27","placa":"TMV726","responsable":"ANDRES FELIPE ZAPATA RODRIGUEZ","carretilla":1,"item":"Etiqueta de inspección"},{"fecha":"2026-04-27","placa":"LJS657","responsable":"JESUS MANUEL ARRIETA PERALES","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-04-27","placa":"LJT731","responsable":"DIEGO LEON MONTERROSA FLOREZ","carretilla":2,"item":"Rodamientos en buen estado"},{"fecha":"2026-04-28","placa":"QJX707","responsable":"RODRIGO LUIS MARCHENA ARTEAGA","carretilla":2,"item":"Etiqueta de inspección"},{"fecha":"2026-04-28","placa":"QJX418","responsable":"DIEGO ARMANDO ARRIETA  ORDOÑEZ","carretilla":2,"item":"Ruedas con aire suficiente"},{"fecha":"2026-04-29","placa":"KSP234","responsable":"EDWARD  SAMIR MOYA MENA","carretilla":1,"item":"Ruedas con aire suficiente"},{"fecha":"2026-04-29","placa":"JTX922","responsable":"BANQUETH ARIAS JUAN JOSE","carretilla":1,"item":"Etiqueta de inspección"},{"fecha":"2026-04-30","placa":"QJX707","responsable":"ANDRES FELIPE ZAPATA RODRIGUEZ","carretilla":2,"item":"Etiqueta de inspección"},{"fecha":"2026-05-01","placa":"LJS661","responsable":"YEISON ANDRES GOMEZ PALOMINO","carretilla":1,"item":"Etiqueta de inspección"},{"fecha":"2026-05-01","placa":"LJS661","responsable":"YEISON ANDRES GOMEZ PALOMINO","carretilla":1,"item":"Condiciones de uso (sin daños/golpes)"},{"fecha":"2026-05-01","placa":"TMV722","responsable":"ANDRES FELIPE  ARAGON RUEDA","carretilla":2,"item":"Ruedas con aire suficiente"},{"fecha":"2026-05-02","placa":"PRZ369","responsable":"MARLON PEREZ MUNZON","carretilla":2,"item":"Ruedas con aire suficiente"}],"novedades":[{"n":1,"fecha_id":"2026-01-02","fecha_cierre":"2026-01-05","placa":"KSP218","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Inflado y balanceo de ruedas — carretilla 1","estado":"Completado"},{"n":2,"fecha_id":"2026-01-03","fecha_cierre":"2026-01-05","placa":"GUR494","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Renovación de etiqueta de inspección de carretilla 1; Lubricación y ajuste de rodamientos — carretilla 1","estado":"Completado"},{"n":3,"fecha_id":"2026-01-03","fecha_cierre":"2026-01-05","placa":"PSX837","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reposición de rueda pinchada — carretilla 2","estado":"Completado"},{"n":4,"fecha_id":"2026-01-05","fecha_cierre":"2026-01-07","placa":"TMV731","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Cambio de rodamientos de carretilla 1","estado":"Completado"},{"n":5,"fecha_id":"2026-01-08","fecha_cierre":"2026-01-10","placa":"LCN198","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Enderezado de estructura — carretilla 1; Reemplazo de rodamientos desgastados — carretilla 2","estado":"Completado"},{"n":6,"fecha_id":"2026-01-09","fecha_cierre":"2026-01-12","placa":"QJX800","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Cambio de rodamientos de carretilla 1","estado":"Completado"},{"n":7,"fecha_id":"2026-01-09","fecha_cierre":"2026-01-12","placa":"TMV731","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Inflado y balanceo de ruedas — carretilla 1","estado":"Completado"},{"n":8,"fecha_id":"2026-01-09","fecha_cierre":"2026-01-12","placa":"LGU379","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Actualización de etiqueta de control — carretilla 2; Cambio de rodamientos de carretilla 2","estado":"Completado"},{"n":9,"fecha_id":"2026-01-09","fecha_cierre":"2026-01-12","placa":"VEK256","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Soldadura y pintura de chasis — carretilla 1","estado":"Completado"},{"n":10,"fecha_id":"2026-01-09","fecha_cierre":"2026-01-12","placa":"LGU379","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Cambio de rodamientos de carretilla 1; Cambio de rodamientos de carretilla 2; Cambio de rueda de carretilla 2","estado":"Completado"},{"n":11,"fecha_id":"2026-01-10","fecha_cierre":"2026-01-12","placa":"LVY389","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reparación estructural y refuerzo — carretilla 1; Lubricación y ajuste de rodamientos — carretilla 2","estado":"Completado"},{"n":12,"fecha_id":"2026-01-12","fecha_cierre":"2026-01-14","placa":"KVW145","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Preventivo","detalle":"Renovación de etiqueta de inspección de carretilla 2","estado":"Completado"},{"n":13,"fecha_id":"2026-01-12","fecha_cierre":"2026-01-14","placa":"KVW121","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Cambio de rueda de carretilla 1; Enderezado de estructura — carretilla 1","estado":"Completado"},{"n":14,"fecha_id":"2026-01-14","fecha_cierre":"2026-01-16","placa":"PSX837","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reposición de rueda pinchada — carretilla 2","estado":"Completado"},{"n":15,"fecha_id":"2026-01-14","fecha_cierre":"2026-01-16","placa":"VCL954","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Lubricación y ajuste de rodamientos — carretilla 1; Renovación de etiqueta de inspección de carretilla 2","estado":"Completado"},{"n":16,"fecha_id":"2026-01-15","fecha_cierre":"2026-01-17","placa":"LJS657","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Soldadura y pintura de chasis — carretilla 2","estado":"Completado"},{"n":17,"fecha_id":"2026-01-16","fecha_cierre":"2026-01-19","placa":"PRZ367","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Enderezado de estructura — carretilla 1","estado":"Completado"},{"n":18,"fecha_id":"2026-01-17","fecha_cierre":"2026-01-19","placa":"PSX832","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Cambio de rodamientos de carretilla 2","estado":"Completado"},{"n":19,"fecha_id":"2026-01-19","fecha_cierre":"2026-01-21","placa":"STZ834","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Actualización de etiqueta de control — carretilla 1; Soldadura y pintura de chasis — carretilla 1","estado":"Completado"},{"n":20,"fecha_id":"2026-01-20","fecha_cierre":"2026-01-22","placa":"TMV721","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Soldadura y pintura de chasis — carretilla 2","estado":"Completado"},{"n":21,"fecha_id":"2026-01-20","fecha_cierre":"2026-01-22","placa":"JTZ262","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Preventivo","detalle":"Renovación de etiqueta de inspección de carretilla 2","estado":"Completado"},{"n":22,"fecha_id":"2026-01-20","fecha_cierre":"2026-01-22","placa":"PSX832","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reemplazo de rodamientos desgastados — carretilla 1; Soldadura y pintura de chasis — carretilla 2","estado":"Completado"},{"n":23,"fecha_id":"2026-01-21","fecha_cierre":"2026-01-23","placa":"TMV726","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reparación estructural y refuerzo — carretilla 1","estado":"Completado"},{"n":24,"fecha_id":"2026-01-21","fecha_cierre":"2026-01-23","placa":"LCN247","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Cambio de rueda de carretilla 1","estado":"Completado"},{"n":25,"fecha_id":"2026-01-21","fecha_cierre":"2026-01-23","placa":"KVW148","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Preventivo","detalle":"Renovación de etiqueta de inspección de carretilla 1","estado":"Completado"},{"n":26,"fecha_id":"2026-01-22","fecha_cierre":"2026-01-24","placa":"TMV888","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Cambio de rodamientos de carretilla 1","estado":"Completado"},{"n":27,"fecha_id":"2026-01-23","fecha_cierre":"2026-01-26","placa":"LGU374","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reposición de rueda pinchada — carretilla 2","estado":"Completado"},{"n":28,"fecha_id":"2026-01-23","fecha_cierre":"2026-01-26","placa":"LJS655","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Preventivo","detalle":"Renovación de etiqueta de inspección de carretilla 1","estado":"Completado"},{"n":29,"fecha_id":"2026-01-24","fecha_cierre":"2026-01-26","placa":"PSX929","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Lubricación y ajuste de rodamientos — carretilla 1","estado":"Completado"},{"n":30,"fecha_id":"2026-01-24","fecha_cierre":"2026-01-26","placa":"TMV721","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Lubricación y ajuste de rodamientos — carretilla 1","estado":"Completado"},{"n":31,"fecha_id":"2026-01-26","fecha_cierre":"2026-01-28","placa":"LJS657","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Cambio de rueda de carretilla 1","estado":"Completado"},{"n":32,"fecha_id":"2026-01-26","fecha_cierre":"2026-01-28","placa":"KSP234","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reemplazo de rodamientos desgastados — carretilla 1","estado":"Completado"},{"n":33,"fecha_id":"2026-01-29","fecha_cierre":"2026-01-31","placa":"PSX837","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Cambio de rueda de carretilla 1; Soldadura y pintura de chasis — carretilla 1; Lubricación y ajuste de rodamientos — carretilla 2","estado":"Completado"},{"n":34,"fecha_id":"2026-01-29","fecha_cierre":"2026-01-31","placa":"TMX167","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Soldadura y pintura de chasis — carretilla 2","estado":"Completado"},{"n":35,"fecha_id":"2026-01-30","fecha_cierre":"2026-02-02","placa":"JTZ265","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Soldadura y pintura de chasis — carretilla 1; Cambio de rodamientos de carretilla 2","estado":"Completado"},{"n":36,"fecha_id":"2026-01-30","fecha_cierre":"2026-02-02","placa":"TMX167","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Cambio de rueda de carretilla 1; Reposición de rueda pinchada — carretilla 2","estado":"Completado"},{"n":37,"fecha_id":"2026-01-30","fecha_cierre":"2026-02-02","placa":"TMX335","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reposición de rueda pinchada — carretilla 1; Soldadura y pintura de chasis — carretilla 1","estado":"Completado"},{"n":38,"fecha_id":"2026-01-30","fecha_cierre":"2026-02-02","placa":"QJX799","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Preventivo","detalle":"Renovación de etiqueta de inspección de carretilla 2","estado":"Completado"},{"n":39,"fecha_id":"2026-01-30","fecha_cierre":"2026-02-02","placa":"KVW148","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Inflado y balanceo de ruedas — carretilla 1; Enderezado de estructura — carretilla 1; Actualización de etiqueta de control — carretilla 2","estado":"Completado"},{"n":40,"fecha_id":"2026-01-31","fecha_cierre":"2026-02-02","placa":"LCN198","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reemplazo de rodamientos desgastados — carretilla 2","estado":"Completado"},{"n":41,"fecha_id":"2026-01-31","fecha_cierre":"2026-02-02","placa":"LJS663","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Cambio de rodamientos de carretilla 2","estado":"Completado"},{"n":42,"fecha_id":"2026-01-31","fecha_cierre":"2026-02-02","placa":"KVW117","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reposición de rueda pinchada — carretilla 1","estado":"Completado"},{"n":43,"fecha_id":"2026-02-02","fecha_cierre":"2026-02-04","placa":"JTY075","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Cambio de rueda de carretilla 2","estado":"Completado"},{"n":44,"fecha_id":"2026-02-02","fecha_cierre":"2026-02-04","placa":"JTY075","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Soldadura y pintura de chasis — carretilla 1","estado":"Completado"},{"n":45,"fecha_id":"2026-02-04","fecha_cierre":"2026-02-06","placa":"TMX167","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Cambio de rueda de carretilla 1","estado":"Completado"},{"n":46,"fecha_id":"2026-02-04","fecha_cierre":"2026-02-06","placa":"VEK256","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reparación estructural y refuerzo — carretilla 1","estado":"Completado"},{"n":47,"fecha_id":"2026-02-04","fecha_cierre":"2026-02-06","placa":"LJT731","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reposición de rueda pinchada — carretilla 1; Soldadura y pintura de chasis — carretilla 1; Lubricación y ajuste de rodamientos — carretilla 2","estado":"Completado"},{"n":48,"fecha_id":"2026-02-05","fecha_cierre":"2026-02-07","placa":"TMX337","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reposición de sticker de inspección — carretilla 1; Reparación estructural y refuerzo — carretilla 1; Reemplazo de rodamientos desgastados — carretilla 2","estado":"Completado"},{"n":49,"fecha_id":"2026-02-05","fecha_cierre":"2026-02-07","placa":"LGU479","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Inflado y balanceo de ruedas — carretilla 1","estado":"Completado"},{"n":50,"fecha_id":"2026-02-05","fecha_cierre":"2026-02-07","placa":"LJS663","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reparación estructural y refuerzo — carretilla 1; Lubricación y ajuste de rodamientos — carretilla 2","estado":"Completado"},{"n":51,"fecha_id":"2026-02-05","fecha_cierre":"2026-02-07","placa":"TMV722","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Preventivo","detalle":"Renovación de etiqueta de inspección de carretilla 1","estado":"Completado"},{"n":52,"fecha_id":"2026-02-06","fecha_cierre":"2026-02-09","placa":"LJS663","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Renovación de etiqueta de inspección de carretilla 1; Soldadura y pintura de chasis — carretilla 1","estado":"Completado"},{"n":53,"fecha_id":"2026-02-06","fecha_cierre":"2026-02-09","placa":"JYO709","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Preventivo","detalle":"Renovación de etiqueta de inspección de carretilla 2","estado":"Completado"},{"n":54,"fecha_id":"2026-02-06","fecha_cierre":"2026-02-09","placa":"JTX922","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Preventivo","detalle":"Renovación de etiqueta de inspección de carretilla 1","estado":"Completado"},{"n":55,"fecha_id":"2026-02-07","fecha_cierre":"2026-02-09","placa":"KVW117","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reposición de rueda pinchada — carretilla 2","estado":"Completado"},{"n":56,"fecha_id":"2026-02-10","fecha_cierre":"2026-02-12","placa":"PSX929","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reposición de sticker de inspección — carretilla 1; Soldadura y pintura de chasis — carretilla 1; Reposición de sticker de inspección — carretilla 2","estado":"Completado"},{"n":57,"fecha_id":"2026-02-10","fecha_cierre":"2026-02-12","placa":"LCN247","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Inflado y balanceo de ruedas — carretilla 1; Soldadura y pintura de chasis — carretilla 1","estado":"Completado"},{"n":58,"fecha_id":"2026-02-11","fecha_cierre":"2026-02-13","placa":"LCM446","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Inflado y balanceo de ruedas — carretilla 1","estado":"Completado"},{"n":59,"fecha_id":"2026-02-11","fecha_cierre":"2026-02-13","placa":"KVW119","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reparación estructural y refuerzo — carretilla 2","estado":"Completado"},{"n":60,"fecha_id":"2026-02-11","fecha_cierre":"2026-02-13","placa":"JTZ261","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reemplazo de rodamientos desgastados — carretilla 2","estado":"Completado"},{"n":61,"fecha_id":"2026-02-11","fecha_cierre":"2026-02-13","placa":"LGU376","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Cambio de rueda de carretilla 1; Enderezado de estructura — carretilla 1","estado":"Completado"},{"n":62,"fecha_id":"2026-02-11","fecha_cierre":"2026-02-13","placa":"LJS656","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reemplazo de rodamientos desgastados — carretilla 1","estado":"Completado"},{"n":63,"fecha_id":"2026-02-12","fecha_cierre":"2026-02-14","placa":"LCL722","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reparación estructural y refuerzo — carretilla 2","estado":"Completado"},{"n":64,"fecha_id":"2026-02-13","fecha_cierre":"2026-02-16","placa":"KVW145","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Enderezado de estructura — carretilla 1; Reposición de sticker de inspección — carretilla 2","estado":"Completado"},{"n":65,"fecha_id":"2026-02-13","fecha_cierre":"2026-02-16","placa":"JTZ262","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Enderezado de estructura — carretilla 1","estado":"Completado"},{"n":66,"fecha_id":"2026-02-13","fecha_cierre":"2026-02-16","placa":"JTX922","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Preventivo","detalle":"Reposición de sticker de inspección — carretilla 2","estado":"Completado"},{"n":67,"fecha_id":"2026-02-14","fecha_cierre":"2026-02-16","placa":"LCN198","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reposición de sticker de inspección — carretilla 1; Enderezado de estructura — carretilla 1; Actualización de etiqueta de control — carretilla 2","estado":"Completado"},{"n":68,"fecha_id":"2026-02-16","fecha_cierre":"2026-02-18","placa":"VEJ945","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Preventivo","detalle":"Renovación de etiqueta de inspección de carretilla 1","estado":"Completado"},{"n":69,"fecha_id":"2026-02-16","fecha_cierre":"2026-02-18","placa":"TMX335","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Actualización de etiqueta de control — carretilla 1; Reposición de rueda pinchada — carretilla 1; Reposición de sticker de inspección — carretilla 2","estado":"Completado"},{"n":70,"fecha_id":"2026-02-16","fecha_cierre":"2026-02-18","placa":"PRZ369","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reposición de sticker de inspección — carretilla 1; Reemplazo de rodamientos desgastados — carretilla 1; Reparación estructural y refuerzo — carretilla 1","estado":"Completado"},{"n":71,"fecha_id":"2026-02-16","fecha_cierre":"2026-02-18","placa":"LJS655","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reemplazo de rodamientos desgastados — carretilla 1; Lubricación y ajuste de rodamientos — carretilla 2","estado":"Completado"},{"n":72,"fecha_id":"2026-02-17","fecha_cierre":"2026-02-19","placa":"PRZ368","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reposición de rueda pinchada — carretilla 1; Reposición de sticker de inspección — carretilla 2","estado":"Completado"},{"n":73,"fecha_id":"2026-02-20","fecha_cierre":"2026-02-23","placa":"VEN939","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Preventivo","detalle":"Renovación de etiqueta de inspección de carretilla 2","estado":"Completado"},{"n":74,"fecha_id":"2026-02-23","fecha_cierre":"2026-02-25","placa":"LJS656","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Cambio de rodamientos de carretilla 1; Inflado y balanceo de ruedas — carretilla 2","estado":"Completado"},{"n":75,"fecha_id":"2026-02-23","fecha_cierre":"2026-02-25","placa":"QJX800","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Lubricación y ajuste de rodamientos — carretilla 2","estado":"Completado"},{"n":76,"fecha_id":"2026-02-23","fecha_cierre":"2026-02-25","placa":"KVW139","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reemplazo de rodamientos desgastados — carretilla 1","estado":"Completado"},{"n":77,"fecha_id":"2026-02-24","fecha_cierre":"2026-02-26","placa":"VEK256","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reemplazo de rodamientos desgastados — carretilla 2","estado":"Completado"},{"n":78,"fecha_id":"2026-02-24","fecha_cierre":"2026-02-26","placa":"VEN939","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Renovación de etiqueta de inspección de carretilla 1; Cambio de rueda de carretilla 1","estado":"Completado"},{"n":79,"fecha_id":"2026-02-24","fecha_cierre":"2026-02-26","placa":"KVW146","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reemplazo de rodamientos desgastados — carretilla 2","estado":"Completado"},{"n":80,"fecha_id":"2026-02-25","fecha_cierre":"2026-02-27","placa":"STZ834","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reemplazo de rodamientos desgastados — carretilla 1; Inflado y balanceo de ruedas — carretilla 1","estado":"Completado"},{"n":81,"fecha_id":"2026-02-26","fecha_cierre":"2026-02-28","placa":"JTZ261","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reposición de rueda pinchada — carretilla 2","estado":"Completado"},{"n":82,"fecha_id":"2026-02-26","fecha_cierre":"2026-02-28","placa":"LJT731","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reposición de rueda pinchada — carretilla 1; Soldadura y pintura de chasis — carretilla 1","estado":"Completado"},{"n":83,"fecha_id":"2026-02-27","fecha_cierre":"2026-03-02","placa":"JTZ261","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Lubricación y ajuste de rodamientos — carretilla 1; Lubricación y ajuste de rodamientos — carretilla 2","estado":"Completado"},{"n":84,"fecha_id":"2026-02-28","fecha_cierre":"2026-03-02","placa":"LGU374","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reemplazo de rodamientos desgastados — carretilla 1; Reparación estructural y refuerzo — carretilla 2","estado":"Completado"},{"n":85,"fecha_id":"2026-03-02","fecha_cierre":"2026-03-04","placa":"PRY839","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Actualización de etiqueta de control — carretilla 1; Reparación estructural y refuerzo — carretilla 1; Renovación de etiqueta de inspección de carretilla 2","estado":"Completado"},{"n":86,"fecha_id":"2026-03-02","fecha_cierre":"2026-03-04","placa":"LCN260","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Inflado y balanceo de ruedas — carretilla 2","estado":"Completado"},{"n":87,"fecha_id":"2026-03-02","fecha_cierre":"2026-03-04","placa":"TMX797","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reposición de sticker de inspección — carretilla 1; Cambio de rueda de carretilla 1","estado":"Completado"},{"n":88,"fecha_id":"2026-03-03","fecha_cierre":"2026-03-05","placa":"QJX761","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reposición de rueda pinchada — carretilla 1; Enderezado de estructura — carretilla 2","estado":"Completado"},{"n":89,"fecha_id":"2026-03-03","fecha_cierre":"2026-03-05","placa":"VEK256","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Lubricación y ajuste de rodamientos — carretilla 1","estado":"Completado"},{"n":90,"fecha_id":"2026-03-05","fecha_cierre":"2026-03-07","placa":"LCN260","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Enderezado de estructura — carretilla 2","estado":"Completado"},{"n":91,"fecha_id":"2026-03-05","fecha_cierre":"2026-03-07","placa":"QJX799","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Cambio de rodamientos de carretilla 1","estado":"Completado"},{"n":92,"fecha_id":"2026-03-06","fecha_cierre":"2026-03-09","placa":"LJS663","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Preventivo","detalle":"Reposición de sticker de inspección — carretilla 2","estado":"Completado"},{"n":93,"fecha_id":"2026-03-06","fecha_cierre":"2026-03-09","placa":"LJS658","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Cambio de rodamientos de carretilla 2","estado":"Completado"},{"n":94,"fecha_id":"2026-03-06","fecha_cierre":"2026-03-09","placa":"JTZ264","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reemplazo de rodamientos desgastados — carretilla 1; Enderezado de estructura — carretilla 1","estado":"Completado"},{"n":95,"fecha_id":"2026-03-06","fecha_cierre":"2026-03-09","placa":"KVW121","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reposición de sticker de inspección — carretilla 1; Reparación estructural y refuerzo — carretilla 1; Inflado y balanceo de ruedas — carretilla 2","estado":"Completado"},{"n":96,"fecha_id":"2026-03-07","fecha_cierre":"2026-03-09","placa":"KSP234","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Preventivo","detalle":"Renovación de etiqueta de inspección de carretilla 1; Renovación de etiqueta de inspección de carretilla 2","estado":"Completado"},{"n":97,"fecha_id":"2026-03-07","fecha_cierre":"2026-03-09","placa":"LCN260","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reposición de sticker de inspección — carretilla 1; Reparación estructural y refuerzo — carretilla 1","estado":"Completado"},{"n":98,"fecha_id":"2026-03-07","fecha_cierre":"2026-03-09","placa":"KVW139","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reposición de rueda pinchada — carretilla 2","estado":"Completado"},{"n":99,"fecha_id":"2026-03-07","fecha_cierre":"2026-03-09","placa":"VEN939","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Inflado y balanceo de ruedas — carretilla 1","estado":"Completado"},{"n":100,"fecha_id":"2026-03-09","fecha_cierre":"2026-03-11","placa":"LCL722","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Renovación de etiqueta de inspección de carretilla 1; Reposición de sticker de inspección — carretilla 2; Reposición de rueda pinchada — carretilla 2","estado":"Completado"},{"n":101,"fecha_id":"2026-03-10","fecha_cierre":"2026-03-12","placa":"TMV888","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Lubricación y ajuste de rodamientos — carretilla 1","estado":"Completado"},{"n":102,"fecha_id":"2026-03-10","fecha_cierre":"2026-03-12","placa":"LGU379","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reposición de rueda pinchada — carretilla 1; Lubricación y ajuste de rodamientos — carretilla 2; Inflado y balanceo de ruedas — carretilla 2","estado":"Completado"},{"n":103,"fecha_id":"2026-03-10","fecha_cierre":"2026-03-12","placa":"PSY065","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reemplazo de rodamientos desgastados — carretilla 1; Inflado y balanceo de ruedas — carretilla 2","estado":"Completado"},{"n":104,"fecha_id":"2026-03-11","fecha_cierre":"2026-03-13","placa":"LGU374","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Enderezado de estructura — carretilla 1; Cambio de rodamientos de carretilla 2","estado":"Completado"},{"n":105,"fecha_id":"2026-03-12","fecha_cierre":"2026-03-14","placa":"VEK256","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Cambio de rodamientos de carretilla 1","estado":"Completado"},{"n":106,"fecha_id":"2026-03-13","fecha_cierre":"2026-03-16","placa":"TMX335","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Preventivo","detalle":"Renovación de etiqueta de inspección de carretilla 1","estado":"Completado"},{"n":107,"fecha_id":"2026-03-13","fecha_cierre":"2026-03-16","placa":"KVW117","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Preventivo","detalle":"Renovación de etiqueta de inspección de carretilla 2","estado":"Completado"},{"n":108,"fecha_id":"2026-03-14","fecha_cierre":"2026-03-16","placa":"SZY584","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Renovación de etiqueta de inspección de carretilla 1; Reemplazo de rodamientos desgastados — carretilla 1; Cambio de rueda de carretilla 1","estado":"Completado"},{"n":109,"fecha_id":"2026-03-16","fecha_cierre":"2026-03-18","placa":"KVW121","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Preventivo","detalle":"Renovación de etiqueta de inspección de carretilla 2","estado":"Completado"},{"n":110,"fecha_id":"2026-03-16","fecha_cierre":"2026-03-18","placa":"PSX929","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Lubricación y ajuste de rodamientos — carretilla 1","estado":"Completado"},{"n":111,"fecha_id":"2026-03-16","fecha_cierre":"2026-03-18","placa":"LGU374","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Soldadura y pintura de chasis — carretilla 1","estado":"Completado"},{"n":112,"fecha_id":"2026-03-17","fecha_cierre":"2026-03-19","placa":"KVW148","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Cambio de rodamientos de carretilla 1; Inflado y balanceo de ruedas — carretilla 1","estado":"Completado"},{"n":113,"fecha_id":"2026-03-17","fecha_cierre":"2026-03-19","placa":"QJX800","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Preventivo","detalle":"Reposición de sticker de inspección — carretilla 1","estado":"Completado"},{"n":114,"fecha_id":"2026-03-17","fecha_cierre":"2026-03-19","placa":"JTZ262","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Cambio de rodamientos de carretilla 2","estado":"Completado"},{"n":115,"fecha_id":"2026-03-18","fecha_cierre":"2026-03-20","placa":"TMV721","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Enderezado de estructura — carretilla 1; Lubricación y ajuste de rodamientos — carretilla 2","estado":"Completado"},{"n":116,"fecha_id":"2026-03-18","fecha_cierre":"2026-03-20","placa":"JTZ264","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reemplazo de rodamientos desgastados — carretilla 1; Lubricación y ajuste de rodamientos — carretilla 2","estado":"Completado"},{"n":117,"fecha_id":"2026-03-18","fecha_cierre":"2026-03-20","placa":"QJX799","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reemplazo de rodamientos desgastados — carretilla 1; Reemplazo de rodamientos desgastados — carretilla 2","estado":"Completado"},{"n":118,"fecha_id":"2026-03-19","fecha_cierre":"2026-03-21","placa":"PSX832","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reparación estructural y refuerzo — carretilla 2","estado":"Completado"},{"n":119,"fecha_id":"2026-03-19","fecha_cierre":"2026-03-21","placa":"LCN247","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Cambio de rueda de carretilla 1; Soldadura y pintura de chasis — carretilla 2","estado":"Completado"},{"n":120,"fecha_id":"2026-03-19","fecha_cierre":"2026-03-21","placa":"QJX761","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Soldadura y pintura de chasis — carretilla 1","estado":"Completado"},{"n":121,"fecha_id":"2026-03-19","fecha_cierre":"2026-03-21","placa":"LGU472","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reemplazo de rodamientos desgastados — carretilla 1; Reposición de rueda pinchada — carretilla 1; Reposición de rueda pinchada — carretilla 2","estado":"Completado"},{"n":122,"fecha_id":"2026-03-20","fecha_cierre":"2026-03-23","placa":"JTZ262","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Soldadura y pintura de chasis — carretilla 1; Enderezado de estructura — carretilla 2","estado":"Completado"},{"n":123,"fecha_id":"2026-03-20","fecha_cierre":"2026-03-23","placa":"LCL744","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reparación estructural y refuerzo — carretilla 2","estado":"Completado"},{"n":124,"fecha_id":"2026-03-21","fecha_cierre":"2026-03-23","placa":"LVY389","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Preventivo","detalle":"Actualización de etiqueta de control — carretilla 1","estado":"Completado"},{"n":125,"fecha_id":"2026-03-21","fecha_cierre":"2026-03-23","placa":"GUR494","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Actualización de etiqueta de control — carretilla 2; Inflado y balanceo de ruedas — carretilla 2","estado":"Completado"},{"n":126,"fecha_id":"2026-03-23","fecha_cierre":"2026-03-25","placa":"PSX927","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Lubricación y ajuste de rodamientos — carretilla 1; Inflado y balanceo de ruedas — carretilla 1","estado":"Completado"},{"n":127,"fecha_id":"2026-03-23","fecha_cierre":"2026-03-25","placa":"TMV726","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Preventivo","detalle":"Reposición de sticker de inspección — carretilla 1","estado":"Completado"},{"n":128,"fecha_id":"2026-03-27","fecha_cierre":"2026-03-30","placa":"LJS657","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Cambio de rodamientos de carretilla 1; Inflado y balanceo de ruedas — carretilla 1","estado":"Completado"},{"n":129,"fecha_id":"2026-03-30","fecha_cierre":"2026-04-01","placa":"QJX761","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Soldadura y pintura de chasis — carretilla 2","estado":"Completado"},{"n":130,"fecha_id":"2026-03-31","fecha_cierre":"2026-04-02","placa":"JTZ264","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reparación estructural y refuerzo — carretilla 1; Renovación de etiqueta de inspección de carretilla 2","estado":"Completado"},{"n":131,"fecha_id":"2026-04-01","fecha_cierre":"2026-04-03","placa":"PSX837","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Cambio de rueda de carretilla 1; Cambio de rueda de carretilla 2","estado":"Completado"},{"n":132,"fecha_id":"2026-04-04","fecha_cierre":"2026-04-06","placa":"LJS657","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Renovación de etiqueta de inspección de carretilla 1; Lubricación y ajuste de rodamientos — carretilla 2; Cambio de rueda de carretilla 2","estado":"Completado"},{"n":133,"fecha_id":"2026-04-04","fecha_cierre":"2026-04-06","placa":"JTZ262","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Cambio de rueda de carretilla 1","estado":"Completado"},{"n":134,"fecha_id":"2026-04-04","fecha_cierre":"2026-04-06","placa":"LGU472","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Inflado y balanceo de ruedas — carretilla 1","estado":"Completado"},{"n":135,"fecha_id":"2026-04-06","fecha_cierre":"2026-04-08","placa":"QJX799","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reemplazo de rodamientos desgastados — carretilla 2; Cambio de rueda de carretilla 2","estado":"Completado"},{"n":136,"fecha_id":"2026-04-07","fecha_cierre":"2026-04-09","placa":"TMX167","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Preventivo","detalle":"Renovación de etiqueta de inspección de carretilla 2","estado":"Completado"},{"n":137,"fecha_id":"2026-04-07","fecha_cierre":"2026-04-09","placa":"LCM449","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Preventivo","detalle":"Renovación de etiqueta de inspección de carretilla 1","estado":"Completado"},{"n":138,"fecha_id":"2026-04-08","fecha_cierre":"2026-04-10","placa":"QJX707","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reemplazo de rodamientos desgastados — carretilla 1; Cambio de rueda de carretilla 1; Actualización de etiqueta de control — carretilla 2","estado":"Completado"},{"n":139,"fecha_id":"2026-04-08","fecha_cierre":"2026-04-10","placa":"QJX800","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Preventivo","detalle":"Renovación de etiqueta de inspección de carretilla 1","estado":"Completado"},{"n":140,"fecha_id":"2026-04-08","fecha_cierre":"2026-04-10","placa":"GUR494","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reparación estructural y refuerzo — carretilla 2","estado":"Completado"},{"n":141,"fecha_id":"2026-04-09","fecha_cierre":"2026-04-11","placa":"LCM446","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Preventivo","detalle":"Actualización de etiqueta de control — carretilla 2","estado":"Completado"},{"n":142,"fecha_id":"2026-04-10","fecha_cierre":"2026-04-13","placa":"PSX835","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Enderezado de estructura — carretilla 2","estado":"Completado"},{"n":143,"fecha_id":"2026-04-11","fecha_cierre":"2026-04-13","placa":"LJS659","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Cambio de rueda de carretilla 2","estado":"Completado"},{"n":144,"fecha_id":"2026-04-11","fecha_cierre":"2026-04-13","placa":"LGU472","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Cambio de rodamientos de carretilla 1","estado":"Completado"},{"n":145,"fecha_id":"2026-04-11","fecha_cierre":"2026-04-13","placa":"QJX799","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Actualización de etiqueta de control — carretilla 1; Lubricación y ajuste de rodamientos — carretilla 2","estado":"Completado"},{"n":146,"fecha_id":"2026-04-11","fecha_cierre":"2026-04-13","placa":"JTZ261","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Cambio de rodamientos de carretilla 1","estado":"Completado"},{"n":147,"fecha_id":"2026-04-14","fecha_cierre":"2026-04-16","placa":"TMX335","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reposición de rueda pinchada — carretilla 1; Lubricación y ajuste de rodamientos — carretilla 2","estado":"Completado"},{"n":148,"fecha_id":"2026-04-15","fecha_cierre":"2026-04-17","placa":"QJX800","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Inflado y balanceo de ruedas — carretilla 1","estado":"Completado"},{"n":149,"fecha_id":"2026-04-16","fecha_cierre":"2026-04-18","placa":"TMV722","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reposición de rueda pinchada — carretilla 1; Lubricación y ajuste de rodamientos — carretilla 2; Reparación estructural y refuerzo — carretilla 2","estado":"Completado"},{"n":150,"fecha_id":"2026-04-17","fecha_cierre":"2026-04-20","placa":"LVY389","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Cambio de rueda de carretilla 1; Renovación de etiqueta de inspección de carretilla 2","estado":"Completado"},{"n":151,"fecha_id":"2026-04-18","fecha_cierre":"2026-04-20","placa":"LCN198","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reposición de sticker de inspección — carretilla 2; Inflado y balanceo de ruedas — carretilla 2","estado":"Completado"},{"n":152,"fecha_id":"2026-04-18","fecha_cierre":"2026-04-20","placa":"QJX761","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reposición de sticker de inspección — carretilla 2; Reparación estructural y refuerzo — carretilla 2","estado":"Completado"},{"n":153,"fecha_id":"2026-04-20","fecha_cierre":"2026-04-22","placa":"KSP234","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Preventivo","detalle":"Reposición de sticker de inspección — carretilla 1","estado":"Completado"},{"n":154,"fecha_id":"2026-04-22","fecha_cierre":"2026-04-24","placa":"VEK256","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Cambio de rueda de carretilla 1; Enderezado de estructura — carretilla 1","estado":"Completado"},{"n":155,"fecha_id":"2026-04-22","fecha_cierre":"2026-04-24","placa":"LCN198","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Renovación de etiqueta de inspección de carretilla 1; Soldadura y pintura de chasis — carretilla 1; Reposición de sticker de inspección — carretilla 2","estado":"Completado"},{"n":156,"fecha_id":"2026-04-22","fecha_cierre":"2026-04-24","placa":"LJS661","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reemplazo de rodamientos desgastados — carretilla 1","estado":"Completado"},{"n":157,"fecha_id":"2026-04-23","fecha_cierre":"2026-04-25","placa":"TMX165","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Inflado y balanceo de ruedas — carretilla 2","estado":"Completado"},{"n":158,"fecha_id":"2026-04-23","fecha_cierre":"2026-04-25","placa":"PSX929","responsable":"CRISTIAN DAVID MARTINEZ POLO","tipo":"Correctivo","detalle":"Reposición de sticker de inspección — carretilla 1; Reposición de rueda pinchada — carretilla 2","estado":"Completado"},{"n":159,"fecha_id":"2026-04-24","fecha_cierre":"2026-04-27","placa":"TMX335","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Enderezado de estructura — carretilla 1","estado":"Completado"},{"n":160,"fecha_id":"2026-04-24","fecha_cierre":"2026-04-27","placa":"VCL954","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Actualización de etiqueta de control — carretilla 2; Cambio de rodamientos de carretilla 2","estado":"Completado"},{"n":161,"fecha_id":"2026-04-25","fecha_cierre":"2026-04-27","placa":"LJS656","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Enderezado de estructura — carretilla 1","estado":"Completado"},{"n":162,"fecha_id":"2026-04-25","fecha_cierre":"2026-04-27","placa":"TMV722","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reposición de rueda pinchada — carretilla 2","estado":"Completado"},{"n":163,"fecha_id":"2026-04-27","fecha_cierre":"2026-04-29","placa":"LJS657","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reparación estructural y refuerzo — carretilla 1","estado":"Completado"},{"n":164,"fecha_id":"2026-04-27","fecha_cierre":"2026-04-29","placa":"LJT731","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Cambio de rodamientos de carretilla 2","estado":"Completado"},{"n":165,"fecha_id":"2026-04-27","fecha_cierre":"2026-04-29","placa":"TMV726","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Preventivo","detalle":"Actualización de etiqueta de control — carretilla 1","estado":"Completado"},{"n":166,"fecha_id":"2026-04-28","fecha_cierre":"2026-04-30","placa":"QJX418","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reposición de rueda pinchada — carretilla 2","estado":"Completado"},{"n":167,"fecha_id":"2026-04-28","fecha_cierre":"2026-04-30","placa":"QJX707","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Preventivo","detalle":"Renovación de etiqueta de inspección de carretilla 2","estado":"Completado"},{"n":168,"fecha_id":"2026-04-29","fecha_cierre":"2026-05-01","placa":"KSP234","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reposición de rueda pinchada — carretilla 1","estado":"Completado"},{"n":169,"fecha_id":"2026-04-29","fecha_cierre":"2026-05-01","placa":"JTX922","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Preventivo","detalle":"Reposición de sticker de inspección — carretilla 1","estado":"Completado"},{"n":170,"fecha_id":"2026-04-30","fecha_cierre":"2026-05-02","placa":"QJX707","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Preventivo","detalle":"Actualización de etiqueta de control — carretilla 2","estado":"Completado"},{"n":171,"fecha_id":"2026-05-01","fecha_cierre":"2026-05-04","placa":"LJS661","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Renovación de etiqueta de inspección de carretilla 1; Soldadura y pintura de chasis — carretilla 1","estado":"Sin completar"},{"n":172,"fecha_id":"2026-05-01","fecha_cierre":"2026-05-04","placa":"TMV722","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Inflado y balanceo de ruedas — carretilla 2","estado":"Sin completar"},{"n":173,"fecha_id":"2026-05-02","fecha_cierre":"2026-05-04","placa":"PRZ369","responsable":"JUAN MANUEL LEAL PERALTA","tipo":"Correctivo","detalle":"Reposición de rueda pinchada — carretilla 2","estado":"Sin completar"}],"novedades_mes":[{"mes":"Enero","total":42,"correctivo":37,"preventivo":5,"completado":42},{"mes":"Febrero","total":42,"correctivo":36,"preventivo":6,"completado":42},{"mes":"Marzo","total":46,"correctivo":38,"preventivo":8,"completado":46},{"mes":"Abril","total":40,"correctivo":31,"preventivo":9,"completado":40},{"mes":"Mayo","total":3,"correctivo":3,"preventivo":0,"completado":0}],"novedades_top_placas":[{"placa":"VEK256","count":6},{"placa":"LCN198","count":5},{"placa":"QJX800","count":5},{"placa":"LJS657","count":5},{"placa":"JTZ262","count":5},{"placa":"QJX799","count":5},{"placa":"TMX335","count":5},{"placa":"TMV722","count":4},{"placa":"JTZ261","count":4},{"placa":"PSX929","count":4},{"placa":"PSX837","count":4},{"placa":"KSP234","count":4},{"placa":"LJS663","count":4},{"placa":"LGU374","count":4},{"placa":"TMX167","count":4}],"novedades_categorias":[{"cat":"Ruedas","count":65},{"cat":"Rodamientos","count":63},{"cat":"Estructura/Chasis","count":58},{"cat":"Etiqueta","count":43},{"cat":"Lubricación","count":22},{"cat":"Soldadura/Pintura","count":22},{"cat":"Otro","count":6}]}</script>
+<script>
+const DATA = JSON.parse(document.getElementById('dataPayload').textContent);
+const C = {
+  dark:'#0a0a0a',dark2:'#171717',dark3:'#262626',
+  orange:'#f97316',orangeDk:'#ea580c',orangeLt:'#fed7aa',
+  amber:'#fbbf24',amberDk:'#d97706',yellow:'#facc15',
+  green:'#16a34a',greenDk:'#15803d',
+  red:'#dc2626',redDk:'#991b1b',
+  slate:'#94a3b8',slate2:'#64748b',slate3:'#404040',
+  ink:'#0a0a0a',muted:'#737373'
+};
+Chart.defaults.font.family = "'Plus Jakarta Sans', system-ui, sans-serif";
+Chart.defaults.color = C.ink;
+Chart.defaults.plugins.legend.labels.usePointStyle = true;
+Chart.defaults.plugins.legend.labels.boxWidth = 8;
+Chart.defaults.plugins.legend.labels.padding = 14;
+Chart.defaults.plugins.legend.labels.font = { size: 12, weight: '600' };
+
+// Meta
+document.getElementById('meta-plan').textContent = DATA.kpi.planeaciones.toLocaleString('es-CO')+' planeaciones';
+document.getElementById('meta-placas').textContent = DATA.meta.placas+' placas';
+document.getElementById('meta-resp').textContent = DATA.meta.responsables+' responsables';
+document.getElementById('gen-date').textContent = new Date().toLocaleDateString('es-CO',{day:'2-digit',month:'long',year:'numeric'});
+
+// Badge
+const adh = DATA.kpi.adherencia;
+const badge = document.getElementById('badge-adh');
+badge.textContent = adh.toFixed(1)+'% Adherencia';
+if (adh < 70) badge.classList.replace('good','bad');
+else if (adh < 85) { badge.classList.remove('good'); }
+
+// Mes filters
+const meses = DATA.por_mes.map(m=>m.mes);
+const mesOpts = meses.map(m=>`<option>${m}</option>`).join('');
+document.getElementById('filter-mes').innerHTML += mesOpts;
+document.getElementById('filter-h-mes').innerHTML += mesOpts;
+
+// KPIs
+const kpiRow = document.getElementById('kpi-row');
+const kpis = [
+  { val: DATA.kpi.planeaciones.toLocaleString('es-CO'), label:'Planeaciones', sub: DATA.meta.placas+' placas · 5 meses', cls:'dark', tab:'adherencia' },
+  { val: DATA.kpi.adherencia.toFixed(1)+'%', label:'Adherencia', sub: DATA.kpi.evaluadas+' evaluadas de '+DATA.kpi.planeaciones, cls: adh>85?'green':'amber', tab:'adherencia' },
+  { val: DATA.kpi.no_aptas.toLocaleString('es-CO'), label:'Carretillas No Aptas', sub: (100-DATA.kpi.pct_apto).toFixed(1)+'% del total', cls:'red', tab:'placas' },
+  { val: DATA.kpi.hallazgos, label:'Hallazgos', sub:'No conformidades en ítems', cls:'amber', tab:'hallazgos' },
+  { val: DATA.kpi.novedades_total, label:'Novedades de Mantto.', sub: DATA.kpi.correctivos+' correc · '+DATA.kpi.preventivos+' prev', cls:'orange', tab:'novedades' },
+  { val: DATA.kpi.pct_cierre.toFixed(1)+'%', label:'Cierre de Novedades', sub: DATA.kpi.novedades_completadas+' / '+DATA.kpi.novedades_total+' · '+DATA.kpi.tiempo_prom_dias+' días prom', cls:'green', tab:'novedades' },
+];
+kpiRow.innerHTML = kpis.map(k=>`
+  <button class="kpi ${k.cls}" data-target="${k.tab}" type="button" aria-label="Ir a ${k.label}">
+    <div class="kpi-val tabular">${k.val}</div>
+    <div class="kpi-label">${k.label}</div>
+    <div class="kpi-sub">${k.sub}</div>
+  </button>
+`).join('');
+
+kpiRow.addEventListener('click', e=>{
+  const card = e.target.closest('.kpi');
+  if (!card) return;
+  const target = card.dataset.target;
+  const tabBtn = document.querySelector(`.tab[data-tab="${target}"]`);
+  if (tabBtn){
+    tabBtn.click();
+    setTimeout(()=>{ const a = document.querySelector(`.tab-content[data-tab="${target}"]`); if (a) a.scrollIntoView({behavior:'smooth', block:'start'}); }, 50);
+  }
+});
+
+// Tabs
+document.querySelectorAll('.tab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const t = btn.dataset.tab;
+    document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active', b===btn));
+    document.querySelectorAll('.tab-content').forEach(c=>c.classList.toggle('active', c.dataset.tab===t));
+  });
+});
+
+// =========== VISTA GENERAL ===========
+// Trend (lines)
+const pm = DATA.por_mes;
+new Chart(document.getElementById('chartTrend'),{
+  type:'line',
+  data:{
+    labels: pm.map(m=>m.mes),
+    datasets:[
+      { label:'Adherencia', data: pm.map(m=>m.adherencia), borderColor:C.orange, backgroundColor:C.orange+'22', tension:.3, borderWidth:3, pointRadius:5, pointBackgroundColor:C.orange, fill:false },
+      { label:'Cumplimiento', data: pm.map(m=>m.cumplimiento), borderColor:C.green, backgroundColor:C.green+'22', tension:.3, borderWidth:3, pointRadius:5, pointBackgroundColor:C.green, fill:false },
+      { label:'% Aptitud', data: pm.map(m=>{ const t = m.aptas+m.no_aptas; return t? Math.round(1000*m.aptas/t)/10 : 0; }), borderColor:C.dark, backgroundColor:C.dark+'22', tension:.3, borderWidth:3, pointRadius:5, pointBackgroundColor:C.dark, fill:false },
+    ]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{position:'top', align:'end'} },
+    scales:{
+      y:{ beginAtZero:false, suggestedMin:60, max:100, ticks:{callback:v=>v+'%'}, grid:{color:'#e7e5e4'} },
+      x:{ grid:{display:false}, ticks:{font:{size:12, weight:'600'}} }
+    }
+  }
+});
+
+// Donuts
+new Chart(document.getElementById('chartAptitud'),{
+  type:'doughnut',
+  data:{ labels:['Aptas','No aptas'], datasets:[{ data:[DATA.kpi.aptas, DATA.kpi.no_aptas], backgroundColor:[C.green, C.red], borderWidth:0, hoverOffset:6 }] },
+  options:{ responsive:true, maintainAspectRatio:false, cutout:'66%',
+    plugins:{ legend:{position:'bottom'}, tooltip:{callbacks:{label:(it)=>{ const tot=it.dataset.data.reduce((a,b)=>a+b,0); return ` ${it.label}: ${it.parsed} (${(100*it.parsed/tot).toFixed(1)}%)`; }}} } }
+});
+new Chart(document.getElementById('chartAdhDonut'),{
+  type:'doughnut',
+  data:{ labels:['Evaluadas','Sin evaluar'], datasets:[{ data:[DATA.kpi.evaluadas, DATA.kpi.sin_evaluar], backgroundColor:[C.dark, C.orange], borderWidth:0, hoverOffset:6 }] },
+  options:{ responsive:true, maintainAspectRatio:false, cutout:'66%',
+    plugins:{ legend:{position:'bottom'}, tooltip:{callbacks:{label:(it)=>{ const tot=it.dataset.data.reduce((a,b)=>a+b,0); return ` ${it.label}: ${it.parsed} (${(100*it.parsed/tot).toFixed(1)}%)`; }}} } }
+});
+
+// Items comparativo (hallazgos C1 vs C2)
+const items = DATA.items;
+new Chart(document.getElementById('chartItemsCompar'),{
+  type:'bar',
+  data:{
+    labels: items.map(i=>i.item),
+    datasets:[
+      { label:'Carretilla 1 (NO)', data: items.map(i=>i.c1_no), backgroundColor:C.orange, borderRadius:5 },
+      { label:'Carretilla 2 (NO)', data: items.map(i=>i.c2_no), backgroundColor:C.dark, borderRadius:5 },
+    ]
+  },
+  options:{
+    indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{position:'top', align:'end'} },
+    scales:{ x:{ beginAtZero:true, grid:{color:'#e7e5e4'} }, y:{ grid:{display:false}, ticks:{font:{size:11, weight:'500'}} } }
+  }
+});
+
+// Top placas
+const topPlacas = DATA.placas.slice(0, 10);
+new Chart(document.getElementById('chartTopPlacas'),{
+  type:'bar',
+  data:{
+    labels: topPlacas.map(p=>p.placa),
+    datasets:[{ label:'Hallazgos', data: topPlacas.map(p=>p.hallazgos), backgroundColor: topPlacas.map((p,i)=> i<3 ? C.red : i<6 ? C.orange : C.amber), borderRadius:5, maxBarThickness:24 }]
+  },
+  options:{
+    indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:(it)=>{ const p = topPlacas[it.dataIndex]; return [` ${p.hallazgos} hallazgos`, ` ${p.no_aptas} carretillas no aptas`, ` ${p.adherencia}% adherencia`]; }}} },
+    scales:{ x:{ beginAtZero:true, grid:{color:'#e7e5e4'}, ticks:{stepSize:1} }, y:{ grid:{display:false}, ticks:{font:{size:11, weight:'600'}} } }
+  }
+});
+
+// =========== ADHERENCIA TAB ===========
+new Chart(document.getElementById('chartAdhMes'),{
+  type:'bar',
+  data:{
+    labels: pm.map(m=>m.mes),
+    datasets:[
+      { type:'bar', label:'Evaluadas', data: pm.map(m=>m.evaluadas), backgroundColor:C.green, borderRadius:5, stack:'a' },
+      { type:'bar', label:'Sin evaluar', data: pm.map(m=>m.sin_evaluar), backgroundColor:C.red, borderRadius:5, stack:'a' },
+      { type:'line', label:'% Adherencia', data: pm.map(m=>m.adherencia), borderColor:C.orange, backgroundColor:C.orange, tension:.3, yAxisID:'y2', borderWidth:3, pointRadius:5, fill:false },
+    ]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{position:'top', align:'end'} },
+    scales:{
+      y:{ stacked:true, beginAtZero:true, position:'left', grid:{color:'#e7e5e4'}, title:{display:true,text:'Planeaciones', font:{size:11, weight:'600'}, color:C.muted} },
+      y2:{ beginAtZero:false, position:'right', min:60, max:100, ticks:{callback:v=>v+'%'}, grid:{display:false}, title:{display:true,text:'% Adherencia', font:{size:11, weight:'600'}, color:C.muted} },
+      x:{ stacked:true, grid:{display:false}, ticks:{font:{size:12, weight:'600'}} }
+    }
+  }
+});
+
+document.querySelector('#tblMes tbody').innerHTML = pm.map(m=>{
+  const adhCls = m.adherencia<70 ? 'bad' : m.adherencia<85 ? '' : 'good';
+  return `<tr>
+    <td><strong>${m.mes}</strong></td>
+    <td class="num">${m.planeadas}</td>
+    <td class="num"><span class="tag tag-green">${m.evaluadas}</span></td>
+    <td class="num"><span class="tag ${m.sin_evaluar>0?'tag-red':'tag-slate'}">${m.sin_evaluar}</span></td>
+    <td><div class="bar-cell"><div class="barbg"><div class="barfill ${adhCls}" style="width:${m.adherencia}%"></div></div><div class="pcttxt">${m.adherencia}%</div></div></td>
+    <td class="num">${m.aptas}</td>
+    <td class="num"><span class="tag ${m.no_aptas>50?'tag-red':m.no_aptas>0?'tag-amber':'tag-slate'}">${m.no_aptas}</span></td>
+    <td class="num"><span class="tag tag-red">${m.hallazgos}</span></td>
+  </tr>`;
+}).join('');
+
+// =========== INSPECCIONES TAB ===========
+new Chart(document.getElementById('chartItemsCumpl'),{
+  type:'bar',
+  data:{
+    labels: items.map(i=>i.item),
+    datasets:[
+      { label:'Carretilla 1 (% cumple)', data: items.map(i=>i.c1_pct), backgroundColor:C.orange, borderRadius:5 },
+      { label:'Carretilla 2 (% cumple)', data: items.map(i=>i.c2_pct), backgroundColor:C.dark, borderRadius:5 },
+    ]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{position:'top', align:'end'}, tooltip:{ callbacks:{ label:(it)=>{ const v = it.parsed.y; return ` ${it.dataset.label}: ${v}%`; }}} },
+    scales:{ y:{ beginAtZero:false, min:80, max:100, ticks:{callback:v=>v+'%'}, grid:{color:'#e7e5e4'} }, x:{ grid:{display:false}, ticks:{font:{size:11, weight:'500'}} } }
+  }
+});
+
+document.querySelector('#tblItems tbody').innerHTML = items.map(i=>{
+  return `<tr>
+    <td><strong>${i.item}</strong></td>
+    <td class="num"><span class="tag ${i.c1_no>20?'tag-red':i.c1_no>0?'tag-amber':'tag-slate'}">${i.c1_no}</span></td>
+    <td><div class="bar-cell"><div class="barbg"><div class="barfill ${i.c1_pct<95?'':'good'}" style="width:${i.c1_pct}%"></div></div><div class="pcttxt">${i.c1_pct}%</div></div></td>
+    <td class="num"><span class="tag ${i.c2_no>20?'tag-red':i.c2_no>0?'tag-amber':'tag-slate'}">${i.c2_no}</span></td>
+    <td><div class="bar-cell"><div class="barbg"><div class="barfill ${i.c2_pct<95?'':'good'}" style="width:${i.c2_pct}%"></div></div><div class="pcttxt">${i.c2_pct}%</div></div></td>
+    <td class="num"><span class="tag tag-red">${i.total_no}</span></td>
+  </tr>`;
+}).join('');
+
+// =========== HALLAZGOS TAB ===========
+const ITEMS_NAMES = [...new Set(DATA.hallazgos.map(h=>h.item))];
+document.getElementById('filter-h-item').innerHTML += ITEMS_NAMES.map(i=>`<option>${i}</option>`).join('');
+
+// Summary cards
+const c1_h = DATA.hallazgos.filter(h=>h.carretilla===1).length;
+const c2_h = DATA.hallazgos.filter(h=>h.carretilla===2).length;
+const placas_h = new Set(DATA.hallazgos.map(h=>h.placa)).size;
+document.getElementById('hallazgos-summary').innerHTML = `
+  <div class="kpi red" style="border-left-color:var(--red)"><div class="kpi-val tabular" style="color:var(--red)">${c1_h}</div><div class="kpi-label">Carretilla 1 · Hallazgos</div><div class="kpi-sub">No conformidades</div></div>
+  <div class="kpi amber" style="border-left-color:var(--amber)"><div class="kpi-val tabular" style="color:var(--amber-dk)">${c2_h}</div><div class="kpi-label">Carretilla 2 · Hallazgos</div><div class="kpi-sub">No conformidades</div></div>
+  <div class="kpi dark" style="border-left-color:var(--dark-800)"><div class="kpi-val tabular">${placas_h}</div><div class="kpi-label">Placas con hallazgos</div><div class="kpi-sub">de ${DATA.placas.length} placas operativas</div></div>
+`;
+
+// Build month index for filter from fecha
+const monthsByFecha = {};
+DATA.por_mes.forEach((m,i)=>{ monthsByFecha[m.mes] = i; });
+function fechaToMes(f){
+  const mes_es = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  if (f === 'N/D') return '';
+  const m = parseInt(f.split('-')[1],10);
+  return mes_es[m-1] || '';
+}
+
+function renderHallazgos(){
+  const q = document.getElementById('search-h').value.toLowerCase().trim();
+  const fi = document.getElementById('filter-h-item').value;
+  const fc = document.getElementById('filter-h-carretilla').value;
+  const fm = document.getElementById('filter-h-mes').value;
+  const filtered = DATA.hallazgos.filter(h=>{
+    if (fi && h.item !== fi) return false;
+    if (fc && String(h.carretilla) !== fc) return false;
+    if (fm && fechaToMes(h.fecha) !== fm) return false;
+    if (q) {
+      const hay = (h.placa+' '+h.item+' '+h.responsable).toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+  document.getElementById('h-shown').textContent = `Mostrando ${filtered.length} de ${DATA.hallazgos.length}`;
+  document.querySelector('#tblHallazgos tbody').innerHTML = filtered.slice(0,500).map(h=>`
+    <tr>
+      <td class="mono" style="font-size:11.5px">${h.fecha}</td>
+      <td><strong class="mono">${h.placa}</strong></td>
+      <td>${h.carretilla===1 ? '<span class="tag tag-orange">Carretilla 1</span>' : '<span class="tag tag-dark">Carretilla 2</span>'}</td>
+      <td>${h.item}</td>
+      <td style="font-size:12px;color:var(--muted)">${h.responsable}</td>
+    </tr>`).join('') + (filtered.length>500?`<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:16px">+ ${filtered.length-500} más · refina los filtros</td></tr>`:'') || '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted)">Sin resultados</td></tr>';
+}
+['search-h','filter-h-item','filter-h-carretilla','filter-h-mes'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', renderHallazgos);
+  document.getElementById(id).addEventListener('change', renderHallazgos);
+});
+renderHallazgos();
+
+// =========== PLACAS TAB ===========
+function renderPlacas(){
+  const q = document.getElementById('search-placa').value.toLowerCase().trim();
+  const ord = document.getElementById('filter-placa-orden').value;
+  let arr = [...DATA.placas];
+  if (ord==='hallazgos') arr.sort((a,b)=>b.hallazgos-a.hallazgos);
+  else if (ord==='no_aptas') arr.sort((a,b)=>b.no_aptas-a.no_aptas);
+  else if (ord==='adherencia_asc') arr.sort((a,b)=>a.adherencia-b.adherencia);
+  else if (ord==='cumplimiento_asc') arr.sort((a,b)=>a.cumplimiento-b.cumplimiento);
+  else if (ord==='placa') arr.sort((a,b)=>a.placa.localeCompare(b.placa));
+  if (q) arr = arr.filter(p=>p.placa.toLowerCase().includes(q) || (p.responsable||'').toLowerCase().includes(q));
+  document.getElementById('placa-shown').textContent = `Mostrando ${arr.length} de ${DATA.placas.length}`;
+  document.querySelector('#tblPlacas tbody').innerHTML = arr.map(p=>{
+    const adhCls = p.adherencia<70?'bad':p.adherencia<85?'':'good';
+    const cmpCls = p.cumplimiento<95?'':'good';
+    return `<tr>
+      <td><strong class="mono">${p.placa}</strong></td>
+      <td style="font-size:12px">${p.responsable}</td>
+      <td class="num">${p.planeadas}</td>
+      <td class="num">${p.evaluadas}</td>
+      <td><div class="bar-cell"><div class="barbg"><div class="barfill ${adhCls}" style="width:${p.adherencia}%"></div></div><div class="pcttxt">${p.adherencia}%</div></div></td>
+      <td class="num"><span class="tag ${p.no_aptas>10?'tag-red':p.no_aptas>0?'tag-amber':'tag-slate'}">${p.no_aptas}</span></td>
+      <td class="num"><span class="tag ${p.hallazgos>5?'tag-red':p.hallazgos>0?'tag-amber':'tag-slate'}">${p.hallazgos}</span></td>
+      <td><div class="bar-cell"><div class="barbg"><div class="barfill ${cmpCls}" style="width:${p.cumplimiento}%"></div></div><div class="pcttxt">${p.cumplimiento}%</div></div></td>
+    </tr>`;
+  }).join('');
+}
+document.getElementById('search-placa').addEventListener('input', renderPlacas);
+document.getElementById('filter-placa-orden').addEventListener('change', renderPlacas);
+renderPlacas();
+
+// =========== RESPONSABLES TAB ===========
+const top15resp = DATA.responsables.slice(0,15);
+new Chart(document.getElementById('chartTopResp'),{
+  type:'bar',
+  data:{
+    labels: top15resp.map(r=>r.responsable),
+    datasets:[{ label:'Planeaciones', data: top15resp.map(r=>r.planeadas), backgroundColor:C.orange, borderRadius:5, maxBarThickness:22 }]
+  },
+  options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ x:{beginAtZero:true, grid:{color:'#e7e5e4'}}, y:{grid:{display:false}, ticks:{font:{size:10}}} } }
+});
+new Chart(document.getElementById('chartRespAdh'),{
+  type:'bar',
+  data:{
+    labels: top15resp.map(r=>r.responsable),
+    datasets:[{ label:'Adherencia', data: top15resp.map(r=>r.adherencia), backgroundColor: top15resp.map(r=>r.adherencia<70?C.red:r.adherencia<85?C.amber:C.green), borderRadius:5, maxBarThickness:22 }]
+  },
+  options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}, tooltip:{callbacks:{label:(it)=>{ const r = top15resp[it.dataIndex]; return [` ${r.adherencia}% adherencia`, ` ${r.evaluadas} de ${r.planeadas} planeaciones`]; }}}}, scales:{ x:{beginAtZero:true, max:100, ticks:{callback:v=>v+'%'}, grid:{color:'#e7e5e4'}}, y:{grid:{display:false}, ticks:{font:{size:10}}} } }
+});
+
+function renderResp(){
+  const q = document.getElementById('search-resp').value.toLowerCase().trim();
+  const ord = document.getElementById('filter-resp-orden').value;
+  let arr = [...DATA.responsables];
+  if (ord==='hallazgos') arr.sort((a,b)=>b.hallazgos-a.hallazgos);
+  else if (ord==='adherencia_asc') arr.sort((a,b)=>a.adherencia-b.adherencia);
+  else arr.sort((a,b)=>b.planeadas-a.planeadas);
+  if (q) arr = arr.filter(r=>r.responsable.toLowerCase().includes(q));
+  document.getElementById('resp-shown').textContent = `Mostrando ${arr.length} de ${DATA.responsables.length}`;
+  document.getElementById('resp-count').textContent = `${DATA.responsables.length} responsables`;
+  document.querySelector('#tblResp tbody').innerHTML = arr.map(r=>{
+    const adhCls = r.adherencia<70?'bad':r.adherencia<85?'':'good';
+    return `<tr>
+      <td><strong>${r.responsable}</strong></td>
+      <td class="num">${r.planeadas}</td>
+      <td class="num">${r.evaluadas}</td>
+      <td><div class="bar-cell"><div class="barbg"><div class="barfill ${adhCls}" style="width:${r.adherencia}%"></div></div><div class="pcttxt">${r.adherencia}%</div></div></td>
+      <td class="num"><span class="tag ${r.no_aptas>5?'tag-red':r.no_aptas>0?'tag-amber':'tag-slate'}">${r.no_aptas}</span></td>
+      <td class="num"><span class="tag ${r.hallazgos>3?'tag-red':r.hallazgos>0?'tag-amber':'tag-slate'}">${r.hallazgos}</span></td>
+    </tr>`;
+  }).join('');
+}
+document.getElementById('search-resp').addEventListener('input', renderResp);
+document.getElementById('filter-resp-orden').addEventListener('change', renderResp);
+renderResp();
+
+// =========== Global mes filter (header) ===========
+// Note: Para no over-engineering, el filtro de header solo afecta la pestaña Adherencia y refresca el chart Adh
+// Simple aviso visual
+document.getElementById('filter-mes').addEventListener('change', e=>{
+  const m = e.target.value;
+  if (!m) return;
+  // Switch to hallazgos with month filter
+  document.getElementById('filter-h-mes').value = m;
+  renderHallazgos();
+  document.querySelector('.tab[data-tab="hallazgos"]').click();
+});
+
+// =========== NOVEDADES TAB ===========
+// Summary
+document.getElementById('novedades-summary').innerHTML = `
+  <div class="kpi orange" style="border-left-color:var(--orange)"><div class="kpi-val tabular">${DATA.kpi.correctivos}</div><div class="kpi-label">Correctivas</div><div class="kpi-sub">${Math.round(100*DATA.kpi.correctivos/DATA.kpi.novedades_total)}% del total</div></div>
+  <div class="kpi green" style="border-left-color:var(--green)"><div class="kpi-val tabular" style="color:var(--green-dk)">${DATA.kpi.preventivos}</div><div class="kpi-label">Preventivas</div><div class="kpi-sub">${Math.round(100*DATA.kpi.preventivos/DATA.kpi.novedades_total)}% del total</div></div>
+  <div class="kpi dark" style="border-left-color:var(--dark-800)"><div class="kpi-val tabular">${DATA.kpi.tiempo_prom_dias}</div><div class="kpi-label">Días promedio de cierre</div><div class="kpi-sub">desde identificación a cierre</div></div>
+`;
+
+const nm = DATA.novedades_mes;
+new Chart(document.getElementById('chartNovMes'),{
+  type:'bar',
+  data:{
+    labels: nm.map(m=>m.mes),
+    datasets:[
+      { label:'Correctivas', data: nm.map(m=>m.correctivo), backgroundColor:C.orange, borderRadius:5, stack:'a' },
+      { label:'Preventivas', data: nm.map(m=>m.preventivo), backgroundColor:C.green, borderRadius:5, stack:'a' },
+    ]
+  },
+  options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'top', align:'end'}}, scales:{ y:{stacked:true, beginAtZero:true, grid:{color:'#e7e5e4'}}, x:{stacked:true, grid:{display:false}, ticks:{font:{size:12, weight:'600'}}} } }
+});
+
+const nc = DATA.novedades_categorias;
+new Chart(document.getElementById('chartNovCat'),{
+  type:'bar',
+  data:{
+    labels: nc.map(c=>c.cat),
+    datasets:[{ label:'Cantidad', data: nc.map(c=>c.count), backgroundColor: nc.map((c,i)=> i===0 ? C.red : i<3 ? C.orange : C.amber), borderRadius:5, maxBarThickness: 36 }]
+  },
+  options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{x:{beginAtZero:true, grid:{color:'#e7e5e4'}}, y:{grid:{display:false}, ticks:{font:{size:11, weight:'600'}}}} }
+});
+
+// Populate nov mes filter
+const novMesesList = DATA.novedades_mes.map(m=>m.mes);
+document.getElementById('filter-nov-mes').innerHTML += novMesesList.map(m=>`<option>${m}</option>`).join('');
+
+// Detail table
+function renderNov(){
+  const q = document.getElementById('search-nov').value.toLowerCase().trim();
+  const ft = document.getElementById('filter-nov-tipo').value;
+  const fe = document.getElementById('filter-nov-estado').value;
+  const fm = document.getElementById('filter-nov-mes').value;
+  const filtered = DATA.novedades.filter(n=>{
+    if (ft && n.tipo !== ft) return false;
+    if (fe && n.estado !== fe) return false;
+    if (fm && fechaToMes(n.fecha_id) !== fm) return false;
+    if (q) {
+      const hay = (n.placa+' '+n.detalle+' '+n.responsable+' '+n.tipo+' '+n.estado).toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+  document.getElementById('nov-shown').textContent = `Mostrando ${filtered.length} de ${DATA.novedades.length}`;
+  document.querySelector('#tblNov tbody').innerHTML = filtered.map(n=>{
+    let dias = '—';
+    if (n.fecha_id !== 'N/D' && n.fecha_cierre !== 'N/D') {
+      const d1 = new Date(n.fecha_id); const d2 = new Date(n.fecha_cierre);
+      dias = Math.round((d2-d1)/(1000*60*60*24));
+    }
+    return `<tr>
+      <td><span class="tag tag-slate mono">${n.n||'—'}</span></td>
+      <td class="mono" style="font-size:11.5px">${n.fecha_id}</td>
+      <td class="mono" style="font-size:11.5px">${n.fecha_cierre}</td>
+      <td class="num"><span class="tag ${dias>5?'tag-red':dias>3?'tag-amber':'tag-green'}">${dias}</span></td>
+      <td><strong class="mono">${n.placa}</strong></td>
+      <td>${n.tipo==='Correctivo'?'<span class="tag tag-orange">Correctivo</span>':'<span class="tag tag-green">Preventivo</span>'}</td>
+      <td style="font-size:12.5px">${n.detalle}</td>
+      <td style="font-size:12px;color:var(--muted)">${n.responsable}</td>
+      <td>${n.estado==='Completado'?'<span class="tag tag-green">Completado</span>':'<span class="tag tag-red">'+n.estado+'</span>'}</td>
+    </tr>`;
+  }).join('');
+}
+['search-nov','filter-nov-tipo','filter-nov-estado','filter-nov-mes'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', renderNov);
+  document.getElementById(id).addEventListener('change', renderNov);
+});
+renderNov();
+
+</script>
+</body>
+</html>
